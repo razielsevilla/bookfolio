@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookfolio - 3D Page-Flip Web Portfolio</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for typography (Cormorant Garamond & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* Design Variables strictly derived from the provided Branding Guidelines */
+    :root {
+      --bg-color: #1A2340;
+      /* Background */
+      --text-color: #F4EAD5;
+      /* Text / Paper Base */
+      --primary-color: #D4A574;
+      /* Primary Gold-Camel */
+      --accent-color: #E8C77A;
+      /* Accent Yellow-Gold */
+      --surface-color: #243054;
+      /* Surface Space Blue */
+      --border-color: #4E4B46;
+      /* Border Charcoal */
+
+      /* Custom system variables */
+      --paper-primary: #94683c;
+      /* Deepened Camel for readability on light cream paper */
+      --bg-gradient: radial-gradient(circle, #243054 0%, #1A2340 100%);
+      --spine-bg: linear-gradient(90deg, #12192e 0%, var(--primary-color) 50%, #12192e 100%);
+      --cover-border: var(--accent-color);
+    }
+
+    /* Set global defaults */
+    body {
+      background: var(--bg-gradient) !important;
+      color: var(--text-color) !important;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Universal font mapping */
+    h1,
+    h2,
+    h3,
+    h4,
+    .font-headline {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    p,
+    span,
+    label,
+    input,
+    textarea,
+    select,
+    button,
+    .font-body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Universal Smooth Transitions */
+    * {
+      transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Header & Footer layout integration */
+    .theme-header-footer {
+      background-color: rgba(36, 48, 84, 0.8) !important;
+      border-color: var(--border-color) !important;
+      color: var(--text-color) !important;
+    }
+
+    /* 3D Scene setup */
+    .scene {
+      perspective: 2000px;
+      perspective-origin: 50% 50%;
+    }
+
+    /* 3D Book wrapper with slide adjustments */
+    .book {
+      position: relative;
+      width: 960px;
+      height: 600px;
+      transform-style: preserve-3d;
+      transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      /* Clean, classic alignment transition */
+      border-radius: 8px;
+    }
+
+    /* Spine component with realistic grounding shadow */
+    .book-spine {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 32px;
+      height: 100%;
+      transform: translateX(-50%) translateZ(-1px);
+      background: var(--spine-bg);
+      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6), 0 10px 25px rgba(0, 0, 0, 0.4);
+      z-index: 50;
+      border-radius: 4px;
+    }
+
+    /* Book-Themed Side Navigation Tabs - Layered within dynamic sheets */
+    .book-tab {
+      position: absolute;
+      left: 474px;
+      /* Tuck 6px under the 480px page to eliminate gaps and ensure click detection */
+      width: 52px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1;
+      transform: translateZ(-2px);
+      border-radius: 0 12px 12px 0;
+      box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.25);
+      background: linear-gradient(90deg, var(--text-color) 0%, #e2d6bc 100%);
+      border: 1px solid var(--primary-color);
+      border-left: none;
+      color: var(--paper-primary);
+      /* Classic direct transition response */
+      transition: left 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+        background-color 0.4s ease,
+        color 0.4s ease;
+      pointer-events: auto;
+      /* Restore interaction for the actual tab */
+    }
+
+    .book-tab:hover {
+      left: 482px;
+      transform: translateZ(-1px);
+      color: var(--bg-color);
+      background: var(--primary-color);
+    }
+
+    .book-tab.active-tab {
+      left: 482px;
+      transform: translateZ(4px);
+      z-index: 6;
+      background: var(--primary-color);
+      color: var(--bg-color);
+      border-color: var(--accent-color);
+      box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    /* --- FLIPPED SHEET NAV TAB OVERRIDES --- */
+    .sheet.flipped .book-tab {
+      transform: translateZ(2px);
+    }
+
+    .sheet.flipped .book-tab:hover {
+      left: 482px;
+      transform: translateZ(1px);
+    }
+
+    .sheet.flipped .book-tab.active-tab {
+      left: 482px;
+      transform: translateZ(-4px);
+    }
+
+    /* Counter-rotate text inside flipped tab so they remain upright */
+    .sheet.flipped .book-tab span {
+      transform: rotateY(180deg);
+    }
+
+    /* Tooltip descriptor extending out from tabs */
+    .tab-tooltip {
+      position: absolute;
+      right: 60px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      white-space: nowrap;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid var(--primary-color);
+    }
+
+    .book-tab:hover .tab-tooltip {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Counter-rotate tooltip on flipped tabs */
+    .sheet.flipped .book-tab .tab-tooltip {
+      transform: rotateY(180deg) translateX(-10px);
+    }
+
+    .sheet.flipped .book-tab:hover .tab-tooltip {
+      transform: rotateY(180deg) translateX(0);
+    }
+
+    /* Sheet with Classic Direct 3D Easing - Expanded width to prevent click event clipping */
+    .sheet {
+      position: absolute;
+      width: 540px;
+      /* Contains tabs completely inside hit-test boundaries */
+      height: 600px;
+      left: 480px;
+      top: 0;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      /* Clean, stiff physical card turn */
+      z-index: 5;
+      will-change: transform;
+      pointer-events: none;
+      /* Clicks pass through transparent stacked sheet coordinate zones */
+    }
+
+    /* Individual Page inside a Sheet */
+    .page {
+      position: absolute;
+      width: 480px;
+      /* Precise page width */
+      height: 100%;
+      top: 0;
+      left: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: preserve-3d;
+      padding: 40px;
+      box-sizing: border-box;
+      overflow: hidden;
+      user-select: none;
+      pointer-events: auto;
+      /* Restore interaction for the actual page contents */
+    }
+
+    /* Standard direct page orientations (Reverted paper flex bend rules) */
+    .page.front {
+      transform: rotateY(0deg);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .page.back {
+      transform: rotateY(180deg);
+      border-radius: 8px 0 0 8px;
+    }
+
+    /* Flipped Class applied to turn pages leftward */
+    .sheet.flipped {
+      transform: rotateY(-180deg);
+    }
+
+    /* Inner pages with dynamic organic paper shadow */
+    .paper-page {
+      background-color: var(--text-color);
+      background-image: radial-gradient(circle at center, #faf5e8 0%, #ecdcb9 100%);
+      color: var(--bg-color) !important;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Realism Gradients for Hinge Valley/Fold shading */
+    .page::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 55px;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .page.front::after {
+      left: 0;
+      background: linear-gradient(90deg, rgba(36, 48, 84, 0.22) 0%, rgba(36, 48, 84, 0.04) 50%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    .page.back::after {
+      right: 0;
+      background: linear-gradient(-90deg, rgba(36, 48, 84, 0.22) 0%, rgba(36, 48, 84, 0.04) 50%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    /* Hardcover Leather texture style with premium physical book shadow */
+    .leather-cover {
+      background: linear-gradient(135deg, var(--bg-color) 0%, #10162b 100%);
+      color: var(--accent-color);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 25px 55px rgba(0, 0, 0, 0.55), inset 0 0 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .cover-rim {
+      border: 3px double var(--cover-border);
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Custom scrollbars for inner scroll containers */
+    .page-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .page-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .page-scroll::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 10px;
+    }
+
+    /* Subtle top studio light effect */
+    .ambient-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% -20%, rgba(212, 165, 116, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Hover page lift indicator */
+    .corner-curl {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(135deg, transparent 45%, rgba(0, 0, 0, 0.1) 50%, rgba(255, 255, 255, 0.6) 65%, transparent 80%);
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 40;
+      opacity: 0.6;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .corner-curl:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .corner-curl-left {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(225deg, transparent 45%, rgba(0, 0, 0, 0.1) 50%, rgba(255, 255, 255, 0.6) 65%, transparent 80%);
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 40;
+      opacity: 0.6;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .corner-curl-left:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    /* Swipe visual cue */
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.5;
+      }
+
+      50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(0.95);
+        opacity: 0.5;
+      }
+    }
+
+    .interactive-cue {
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="h-screen w-screen overflow-hidden flex flex-col justify-between select-none relative">
+
+  <!-- Ambient Light Studio Workspace Overlay -->
+  <div class="ambient-glow"></div>
+  <div
+    class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(0,0,0,0.2)_100%)] pointer-events-none z-0">
+  </div>
+
+  <!-- Header Panel -->
+  <header class="theme-header-footer w-full px-6 py-4 flex items-center justify-between border-b backdrop-blur-md z-30">
+    <div class="flex items-center space-x-3">
+      <!-- SVG Animated Feather Pen Logo using Accent Color -->
+      <svg class="w-8 h-8 text-[#D4A574]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+      </svg>
+      <div>
+        <h1 class="text-xl font-bold tracking-widest font-headline leading-none text-[#E8C77A]">BOOKFOLIO</h1>
+        <span class="text-[10px] tracking-wider uppercase opacity-85 font-body">3D Interactive Portfolio Codex</span>
+      </div>
+    </div>
+
+    <!-- Controls Hub -->
+    <div class="flex items-center space-x-4 relative z-50">
+      <!-- Sound Toggle -->
+      <button id="sound-btn" onclick="toggleSound()"
+        class="p-2 rounded-full border border-[#D4A574]/40 hover:border-[#D4A574] bg-[#1A2340]/40 text-[#E8C77A] hover:bg-[#1A2340]/80 transition-all"
+        title="Toggle sound FX">
+        <svg id="sound-icon-on" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 18.75V5.25L7.75 9.5H4.5v5h3.25L12 18.75z" />
+        </svg>
+        <svg id="sound-icon-off" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+        </svg>
+      </button>
+
+      <!-- Signature Seal Indicator -->
+      <div
+        class="hidden sm:flex items-center space-x-2 border border-[#4E4B46] px-3 py-1.5 rounded-full bg-[#1A2340]/60 text-xs font-mono text-[#D4A574]">
+        <span class="w-2 h-2 rounded-full bg-[#E8C77A] animate-pulse"></span>
+        <span>MAPPED INDEX V.2.6</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Sandbox Display: Contains 3D Book scaled precisely -->
+  <main class="flex-grow flex items-center justify-center relative p-4 overflow-hidden z-10">
+
+    <!-- Outer Scaler Node to retain perfect aspect ratios on dynamic viewports -->
+    <div id="book-scaler" class="transition-transform duration-300 ease-out flex items-center justify-center">
+      <div class="scene">
+        <div class="book" id="book" style="transform: rotateX(10deg) rotateY(-5deg) translateX(-25%);">
+
+          <!-- Virtual Physical Spine structure -->
+          <div class="book-spine"></div>
+
+          <!-- ===================================== -->
+          <!-- SHEET 1: FRONT COVER / INSIDE WELCOME (FOREWORD PART 1) -->
+          <!-- ===================================== -->
+          <div class="sheet" id="sheet1" style="z-index: 7;" data-tab-group="foreword" data-spread-name="Cover at Rest">
+
+            <!-- Tab I (Awakening) physically bound inside Sheet 1 -->
+            <div onclick="goToSheet(1)" class="book-tab active-tab" style="top: 60px;" data-tab-index="1">
+              <span class="text-xs font-bold font-headline">I</span>
+              <div class="tab-tooltip shadow-md">I: Awakening</div>
+            </div>
+
+            <!-- Cover Front side (Elegant Leather Design) -->
+            <div
+              class="page front leather-cover flex flex-col justify-between items-center relative overflow-hidden text-center cursor-pointer"
+              onclick="nextPage()">
+              <div class="cover-rim absolute inset-4 flex flex-col justify-between p-8">
+                <div>
+                  <p class="text-xs tracking-[0.25em] font-medium text-[#D4A574] font-body">PORTFOLIO CODEX 2026</p>
+                  <div class="w-12 h-px bg-[#D4A574]/40 mx-auto mt-2"></div>
+                </div>
+
+                <div class="my-auto py-6">
+                  <!-- Large Gold Graphic SVG Emblem -->
+                  <div
+                    class="w-24 h-24 mx-auto mb-6 flex items-center justify-center text-[#E8C77A] rounded-full border border-[#D4A574]/30 bg-[#243054]/40 shadow-lg interactive-cue">
+                    <svg class="w-16 h-16" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
+                    </svg>
+                  </div>
+                  <h2
+                    class="text-3xl md:text-4xl font-extrabold tracking-widest font-headline leading-tight text-[#E8C77A]">
+                    BOOKFOLIO</h2>
+                  <p class="text-[10px] tracking-widest mt-3 text-[#D4A574] font-body">A MULTI-DIMENSIONAL WEB SHOWCASE
+                  </p>
+                </div>
+
+                <div
+                  class="text-xs tracking-[0.2em] font-headline text-[#E8C77A] hover:text-white transition-all animate-pulse">
+                  CLICK TO UNVEIL &rarr;
+                </div>
+              </div>
+              <div class="corner-curl" onclick="event.stopPropagation(); nextPage();"></div>
+            </div>
+
+            <!-- Page 1 Back: Welcome & Bio (Chapter 1: The Scribe's Awakening - Page 1) -->
+            <div class="page back paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  I : THE SCRIBE'S AWAKENING</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Reader &amp; Creator</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
+
+                <div class="flex items-center space-x-4 mb-4">
+                  <div
+                    class="w-16 h-16 rounded-full bg-[#1A2340]/5 border border-[var(--paper-primary)]/30 flex items-center justify-center text-[var(--paper-primary)]">
+                    <svg class="w-9 h-9" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-sm text-[#1A2340] font-body">Raziel Sevilla</h4>
+                    <p class="text-xs text-[var(--paper-primary)] font-body">Full-Stack Developer</p>
+                  </div>
+                </div>
+
+                <p class="text-sm leading-relaxed mb-4 text-justify font-body text-[#1A2340]/90">
+                  I build for the web, tinker with Machine Learning, and ship things that work. From AI-enhanced
+                  blockchain frameworks to gamified task management, I turn complex problems into functional,
+                  high-impact code.
+                </p>
+                <p class="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90">
+                  Before being a developer, before being an engineer, I am a reader first. I am someone who reads —
+                  books, codebases, documentation, people. This portfolio is shaped in the image of that identity. What
+                  you navigate here is not a list of accomplishments. It is a story in progress — each chapter a
+                  different facet of how I think and what I build.
+                </p>
+              </div>
+
+              <!-- Page Footer indicator (Left Page: Left-aligned) -->
+              <div
+                class="flex justify-start items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 1</span>
+              </div>
+              <div class="corner-curl-left" onclick="prevPage()"></div>
+            </div>
+
+          </div>
+
+          <!-- ===================================== -->
+          <!-- SHEET 2: FOREWORD PART 2 & EXPERIENCE (CHAPTER 2) -->
+          <!-- ===================================== -->
+          <div class="sheet" id="sheet2" style="z-index: 6;" data-tab-group="experience"
+            data-spread-name="Genesis & Biography">
+
+            <!-- Tab II (Chronicles) physically bound inside Sheet 2 -->
+            <div onclick="goToSheet(2)" class="book-tab" style="top: 120px;" data-tab-index="2">
+              <span class="text-xs font-bold font-headline">II</span>
+              <div class="tab-tooltip shadow-md">II: Chronicles</div>
+            </div>
+
+            <!-- Page 2 Front: Chapter 1: The Scribe's Awakening - Page 2 (Our Narrative Path) -->
+            <div class="page front paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  I : THE SCRIBE'S AWAKENING</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Our Narrative Path</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
+
+                <p class="text-sm leading-relaxed mb-4 text-justify font-body text-[#1A2340]/90">
+                  By blending responsive SVG vector maps, dynamic real-time synthesized audio nodes, and strict CSS 3D
+                  hardware-accelerated viewport alignments, we demonstrate that spatial software architecture can feel
+                  remarkably physical.
+                </p>
+
+                <blockquote
+                  class="border-l-4 border-[var(--primary-color)] pl-4 py-1.5 my-4 italic text-sm text-[var(--paper-primary)] font-headline">
+                  "The finest interfaces do not merely command attention; they evoke curiosity through tactile
+                  structures."
+                </blockquote>
+
+                <p class="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90">
+                  Every index tab in this layout represents a key chapter of my technical catalog. Flip through the
+                  pages to review experiences, interactive capabilities, and verified certification logs.
+                </p>
+              </div>
+
+              <!-- Page Footer indicator (Right Page: Right-aligned) -->
+              <div
+                class="flex justify-end items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 2</span>
+              </div>
+              <div class="corner-curl" onclick="event.stopPropagation(); nextPage();"></div>
+            </div>
+
+            <!-- Page 2 Back: Chapter 2: Trails & Chronicles - Page 3 -->
+            <div class="page back paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  II : TRAILS &amp; CHRONICLES</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Chronicles of the Crucible</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
+
+                <!-- Stylized Interactive Timeline -->
+                <div class="space-y-4">
+                  <div class="relative pl-6 border-l-2 border-[#D4A574]/30">
+                    <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#D4A574] border-4 border-[#F4EAD5]">
+                    </div>
+                    <span class="text-[10px] font-mono uppercase text-[var(--paper-primary)] font-bold">2024 -
+                      Present</span>
+                    <h4 class="font-bold text-xs leading-snug text-[#1A2340] font-headline">Lead AI Systems Architect
+                    </h4>
+                    <p class="text-[11px] text-[#1A2340]/80 leading-relaxed font-body">Supervising secure GAN modeling
+                      pipelines, Ethereum ledgers, and virtual token infrastructures to prevent concurrent
+                      race-conditions.</p>
+                  </div>
+                  <div class="relative pl-6 border-l-2 border-[#D4A574]/30">
+                    <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-[#D4A574] border-4 border-[#F4EAD5]">
+                    </div>
+                    <span class="text-[10px] font-mono uppercase text-[var(--paper-primary)] font-bold">2022 -
+                      2024</span>
+                    <h4 class="font-bold text-xs leading-snug text-[#1A2340] font-headline">Full-Stack Engineer</h4>
+                    <p class="text-[11px] text-[#1A2340]/80 leading-relaxed font-body">Led technopreneurship projects.
+                      Delivered robust React, Laravel, and MySQL frameworks targeting high-traffic operations with
+                      strict latency constraints.</p>
+                  </div>
+                  <div class="relative pl-6">
+                    <div class="absolute -left-[7px] top-1 w-4 h-4 rounded-full bg-[#D4A574] border-4 border-[#F4EAD5]">
+                    </div>
+                    <span class="text-[10px] font-mono uppercase text-[var(--paper-primary)] font-bold">2021 -
+                      2022</span>
+                    <h4 class="font-bold text-xs leading-snug text-[#1A2340] font-headline">Research Associate (ML &amp;
+                      Crypto)</h4>
+                    <p class="text-[11px] text-[#1A2340]/80 leading-relaxed font-body">Pioneered custom Rust-based
+                      chained cryptography routines with robust Argon2id stretching structures.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Left Page: Left-aligned) -->
+              <div
+                class="flex justify-start items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 3</span>
+              </div>
+              <div class="corner-curl-left" onclick="prevPage()"></div>
+            </div>
+
+          </div>
+
+          <!-- ===================================== -->
+          <!-- SHEET 3: SKILLS (CHAPTER 3) & PROJECTS GRID (CHAPTER 4 - PAGE 5) -->
+          <!-- ===================================== -->
+          <div class="sheet" id="sheet3" style="z-index: 5;" data-tab-group="skills"
+            data-spread-name="Skills & Project Showcase">
+
+            <!-- Tab III (Arcanum) physically bound inside Sheet 3 -->
+            <div onclick="goToSheet(2)" class="book-tab" style="top: 180px;" data-tab-index="2">
+              <span class="text-xs font-bold font-headline">III</span>
+              <div class="tab-tooltip shadow-md">III: Arcanum</div>
+            </div>
+
+            <!-- Tab IV (Relics) physically bound inside Sheet 3 -->
+            <div onclick="goToSheet(3)" class="book-tab" style="top: 240px;" data-tab-index="3">
+              <span class="text-xs font-bold font-headline">IV</span>
+              <div class="tab-tooltip shadow-md">IV: Relics</div>
+            </div>
+
+            <!-- Page 3 Front: Chapter 3: The Arcanum of Crafts - Page 4 -->
+            <div class="page front paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  III : THE ARCANUM OF CRAFTS</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Guild of Instruments</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
+
+                <!-- Interactive Skill Cards with dynamic feedback -->
+                <div class="space-y-4">
+                  <div
+                    class="p-3 bg-black/5 rounded-xl border border-[#4E4B46]/15 hover:border-[var(--paper-primary)]/40 hover:bg-black/10 transition-all cursor-pointer group"
+                    onclick="showSkillInfo('interface')">
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-bold flex items-center gap-2 text-[#1A2340] font-body">
+                        <svg class="w-4 h-4 text-[var(--paper-primary)]" fill="none" stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                        </svg>
+                        Interface Layer
+                      </span>
+                      <span class="text-xs font-mono text-[var(--paper-primary)] font-bold">95%</span>
+                    </div>
+                    <div class="w-full bg-[#1A2340]/10 h-1.5 rounded-full overflow-hidden">
+                      <div class="bg-[var(--paper-primary)] h-1.5 rounded-full transition-all duration-1000"
+                        style="width: 95%"></div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="p-3 bg-black/5 rounded-xl border border-[#4E4B46]/15 hover:border-[var(--paper-primary)]/40 hover:bg-black/10 transition-all cursor-pointer group"
+                    onclick="showSkillInfo('systems')">
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-bold flex items-center gap-2 text-[#1A2340] font-body">
+                        <svg class="w-4 h-4 text-[var(--paper-primary)]" fill="none" stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                        </svg>
+                        Systems &amp; Data Layer
+                      </span>
+                      <span class="text-xs font-mono text-[var(--paper-primary)] font-bold">90%</span>
+                    </div>
+                    <div class="w-full bg-[#1A2340]/10 h-1.5 rounded-full overflow-hidden">
+                      <div class="bg-[var(--paper-primary)] h-1.5 rounded-full transition-all duration-1000"
+                        style="width: 90%"></div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="p-3 bg-black/5 rounded-xl border border-[#4E4B46]/15 hover:border-[var(--paper-primary)]/40 hover:bg-black/10 transition-all cursor-pointer group"
+                    onclick="showSkillInfo('infra')">
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-sm font-bold flex items-center gap-2 text-[#1A2340] font-body">
+                        <svg class="w-4 h-4 text-[var(--paper-primary)]" fill="none" stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                        Infrastructure &amp; Cloud
+                      </span>
+                      <span class="text-xs font-mono text-[var(--paper-primary)] font-bold">85%</span>
+                    </div>
+                    <div class="w-full bg-[#1A2340]/10 h-1.5 rounded-full overflow-hidden">
+                      <div class="bg-[var(--paper-primary)] h-1.5 rounded-full transition-all duration-1000"
+                        style="width: 85%"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Info Display Area based on card click -->
+                <div id="skill-detail-box"
+                  class="mt-4 p-3 bg-black/5 border border-[#4E4B46]/20 rounded-xl text-xs leading-relaxed text-[#1A2340]/80 font-body">
+                  <span class="font-bold block text-[var(--paper-primary)] mb-1">Interactive Highlight:</span>
+                  Click on any capability card above to review practical deployment details and architecture
+                  methodologies instantly.
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Right Page: Right-aligned) -->
+              <div
+                class="flex justify-end items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 4</span>
+              </div>
+              <div class="corner-curl" onclick="event.stopPropagation(); nextPage();"></div>
+            </div>
+
+            <!-- Page 3 Back: Chapter 4: Relics of Creation - Page 5 (Scrollable Portfolio Grid) -->
+            <div class="page back paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  IV : RELICS OF CREATION</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Great Forge</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-3"></div>
+
+                <!-- Project Filters -->
+                <div class="flex items-center space-x-2 mb-3 text-xs font-body">
+                  <button onclick="filterPortfolio('all')" id="filter-all"
+                    class="px-2.5 py-1 rounded-md bg-[#1A2340] text-[#F4EAD5] font-medium transition-all">All</button>
+                  <button onclick="filterPortfolio('dev')" id="filter-dev"
+                    class="px-2.5 py-1 rounded-md bg-black/5 hover:bg-black/10 border border-[#4E4B46]/20 text-[#1A2340] font-medium transition-all">Develop</button>
+                  <button onclick="filterPortfolio('design')" id="filter-design"
+                    class="px-2.5 py-1 rounded-md bg-black/5 hover:bg-black/10 border border-[#4E4B46]/20 text-[#1A2340] font-medium transition-all">Design</button>
+                </div>
+
+                <!-- Scrollable container designed to handle deep project records cleanly -->
+                <div class="h-[310px] overflow-y-auto page-scroll pr-1">
+                  <div class="grid grid-cols-2 gap-3" id="portfolio-grid">
+                    <!-- Project Cards injected via JS dynamically -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Left Page: Left-aligned) -->
+              <div
+                class="flex justify-start items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 5</span>
+              </div>
+              <div class="corner-curl-left" onclick="prevPage()"></div>
+            </div>
+
+          </div>
+
+          <!-- ===================================== -->
+          <!-- SHEET 4: PROJECTS VIEW (CHAPTER 4 - PAGE 6) & CERTIFICATES (CHAPTER 5 - PAGE 7) -->
+          <!-- ===================================== -->
+          <div class="sheet" id="sheet4" style="z-index: 4;" data-tab-group="projects"
+            data-spread-name="Project Showcase">
+
+            <!-- Tab V (Seals) physically bound inside Sheet 4 -->
+            <div onclick="goToSheet(4)" class="book-tab" style="top: 300px;" data-tab-index="4">
+              <span class="text-xs font-bold font-headline">V</span>
+              <div class="tab-tooltip shadow-md">V: Seals</div>
+            </div>
+
+            <!-- Page 4 Front: Chapter 4: Relics of Creation - Page 6 (Specifications Viewer) -->
+            <div class="page front paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body"
+                  id="showcase-category">RELIQUARY VIEW</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]" id="showcase-title">Kumpirma</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+
+                <!-- Vector Graphical Preview Frame representing the Project -->
+                <div
+                  class="relative w-full h-32 rounded-xl bg-gradient-to-br from-[#243054] to-[#1A2340] border border-[#4E4B46]/35 p-0.5 overflow-hidden mb-4 shadow-md group">
+                  <div class="absolute inset-0 bg-black/20 flex items-center justify-center text-[#E8C77A]"
+                    id="showcase-graphic">
+                    <!-- SVG graphics updated by JS -->
+                  </div>
+                </div>
+
+                <p class="text-sm leading-relaxed text-[#1A2340]/90 text-justify mb-4 font-body" id="showcase-desc">
+                  Explore full layout performance benchmarks, responsive design layers, and dynamic systems operations.
+                  Select any catalog artifact from the adjacent page to map live credentials.
+                </p>
+
+                <!-- Project Specifications Table (Adjusted Contrast) -->
+                <div
+                  class="p-3 bg-black/5 rounded-xl border border-[#4E4B46]/20 grid grid-cols-2 gap-2 text-xs font-mono">
+                  <div>
+                    <span
+                      class="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Client:</span>
+                    <span class="text-[#1A2340] font-bold font-body" id="showcase-client">Academic Project</span>
+                  </div>
+                  <div>
+                    <span class="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Tech
+                      Stack:</span>
+                    <span class="text-[#1A2340] font-bold font-body" id="showcase-tech">TensorFlow.js / Blockchain /
+                      Laravel</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Right Page: Right-aligned) -->
+              <div
+                class="flex justify-end items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 6</span>
+              </div>
+              <div class="corner-curl" onclick="event.stopPropagation(); nextPage();"></div>
+            </div>
+
+            <!-- Page 4 Back: Chapter 5: Seals of Validation - Page 7 (Scrollable Credentials List) -->
+            <div class="page back paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  V : SEALS OF VALIDATION</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Credentials Vault</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+
+                <!-- Scrollable container designed to handle dense lists of certificates beautifully -->
+                <div class="h-[340px] overflow-y-auto page-scroll space-y-3 pr-1" id="certificates-list">
+                  <!-- Certificate Cards dynamically rendered via JS to guarantee fluid rendering -->
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Left Page: Left-aligned) -->
+              <div
+                class="flex justify-start items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 7</span>
+              </div>
+              <div class="corner-curl-left" onclick="prevPage()"></div>
+            </div>
+
+          </div>
+
+          <!-- ===================================== -->
+          <!-- SHEET 5: CERTIFICATES INFO (CHAPTER 5 - PAGE 8) & TESTIMONIALS (CHAPTER 6 - PAGE 9) -->
+          <!-- ===================================== -->
+          <div class="sheet" id="sheet5" style="z-index: 3;" data-tab-group="testimonials"
+            data-spread-name="Ledger & Guestbook">
+
+            <!-- Tab VI (Echoes) physically bound inside Sheet 5 -->
+            <div onclick="goToSheet(5)" class="book-tab" style="top: 360px;" data-tab-index="5">
+              <span class="text-xs font-bold font-headline">VI</span>
+              <div class="tab-tooltip shadow-md">VI: Echoes</div>
+            </div>
+
+            <!-- Page 5 Front: Chapter 5: Seals of Validation - Page 8 (Detailed Verification Specs) -->
+            <div class="page front paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  V : SEALS OF VALIDATION</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Cryptographic Audits</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+
+                <!-- Info detail block -->
+                <div id="cert-detail-box"
+                  class="p-4 bg-black/5 border border-[#4E4B46]/20 rounded-xl text-sm leading-relaxed text-[#1A2340]/80 font-body">
+                  <span class="font-bold block text-[var(--paper-primary)] mb-1">Interactive Highlight:</span>
+                  Click on any verified certificate card on the adjacent page to review practical deployment details,
+                  credentials, and validation hashes instantly.
+                </div>
+
+                <div
+                  class="mt-4 p-3 bg-[#243054]/5 rounded-xl border border-[#4E4B46]/10 text-xs font-mono text-[#1A2340]/90">
+                  <p class="font-bold uppercase tracking-wider text-[var(--paper-primary)] mb-1">Standard Trust Protocol
+                  </p>
+                  All credentials listed on Page 7 are cryptographically hashed and recorded directly onto our verified
+                  index hashes.
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Right Page: Right-aligned) -->
+              <div
+                class="flex justify-end items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 8</span>
+              </div>
+              <div class="corner-curl" onclick="event.stopPropagation(); nextPage();"></div>
+            </div>
+
+            <!-- Page 5 Back: Chapter 6: Echoes from the Ledger - Page 9 (Submission Form) -->
+            <div class="page back paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  VI : ECHOES FROM THE LEDGER</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Inscribe Your Tale</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+
+                <!-- Input area (Styled elegantly on Light Paper) -->
+                <div class="space-y-3 mb-4 font-body">
+                  <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="visitor-name" placeholder="Your Name"
+                      class="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2.5 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] placeholder-[#1A2340]/50" />
+                    <div
+                      class="flex items-center space-x-1 justify-around bg-black/5 border border-[#4E4B46]/35 rounded-lg px-2">
+                      <button onclick="selectEmoji('✍️')" class="emoji-btn text-sm hover:scale-125 transition-transform"
+                        title="Author">✍️</button>
+                      <button onclick="selectEmoji('🚀')" class="emoji-btn text-sm hover:scale-125 transition-transform"
+                        title="Rocket">🚀</button>
+                      <button onclick="selectEmoji('✨')" class="emoji-btn text-sm hover:scale-125 transition-transform"
+                        title="Sparkle">✨</button>
+                      <button onclick="selectEmoji('🔥')" class="emoji-btn text-sm hover:scale-125 transition-transform"
+                        title="Fire">🔥</button>
+                      <span id="selected-emoji"
+                        class="text-xs font-mono ml-1 font-bold text-[var(--paper-primary)]">✍️</span>
+                    </div>
+                  </div>
+                  <textarea id="visitor-message" placeholder="Type a short greeting..." rows="3"
+                    class="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2.5 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] placeholder-[#1A2340]/50 resize-none"></textarea>
+                  <button onclick="submitComment()"
+                    class="w-full bg-[#1A2340] text-[#F4EAD5] font-bold text-xs py-2.5 rounded-lg hover:bg-[#243054] transition-all flex items-center justify-center gap-1 shadow-md">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Publish to Codex
+                  </button>
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Left Page: Left-aligned) -->
+              <div
+                class="flex justify-start items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 9</span>
+              </div>
+              <div class="corner-curl-left" onclick="prevPage()"></div>
+            </div>
+
+          </div>
+
+          <!-- ===================================== -->
+          <!-- SHEET 6: TESTIMONIALS LEDGER (CHAPTER 6 - PAGE 10) & EPILOGUE (CHAPTER 7 - PAGE 11) -->
+          <!-- ===================================== -->
+          <div class="sheet" id="sheet6" style="z-index: 2;" data-tab-group="epilogue"
+            data-spread-name="Colophon & Epilogue">
+
+            <!-- Tab VII (Letters) physically bound inside Sheet 6 -->
+            <div onclick="goToSheet(6)" class="book-tab" style="top: 420px;" data-tab-index="6">
+              <span class="text-xs font-bold font-headline">VII</span>
+              <div class="tab-tooltip shadow-md">VII: Letters</div>
+            </div>
+
+            <!-- Page 6 Front: Chapter 6: Echoes from the Ledger - Page 10 (Scrollable Ledger Codex Viewer) -->
+            <div class="page front paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  VI : ECHOES FROM THE LEDGER</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Scroll of Greetings</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+
+                <!-- Live Guestbook List Scrollable - handles numerous testimonial feedback logs -->
+                <div class="h-80 overflow-y-auto page-scroll space-y-2 pr-1" id="guestbook-list">
+                  <!-- Filled via JS dynamic states -->
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Right Page: Right-aligned) -->
+              <div
+                class="flex justify-end items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 10</span>
+              </div>
+              <div class="corner-curl" onclick="event.stopPropagation(); nextPage();"></div>
+            </div>
+
+            <!-- Page 6 Back: Chapter 7: Letters to the Horizon - Page 11 (Contact Form) -->
+            <div class="page back paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  VII : LETTERS TO THE HORIZON</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Dispatch an Envoy</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+
+                <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-3 font-body">
+                  <div>
+                    <label
+                      class="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Email
+                      Address</label>
+                    <input required type="email" id="contact-email"
+                      class="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)]" />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Nature
+                      of Inquiry</label>
+                    <select id="contact-nature"
+                      class="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)]">
+                      <option>System Architecture</option>
+                      <option>3D Interface Commission</option>
+                      <option>Speaking &amp; Lectures</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      class="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Project
+                      Details</label>
+                    <textarea required id="contact-message" rows="3"
+                      class="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] resize-none"></textarea>
+                  </div>
+                  <button type="submit"
+                    class="w-full bg-[#1A2340] text-[#F4EAD5] font-bold text-xs py-2 rounded-lg hover:bg-[#243054] transition-all flex items-center justify-center gap-1.5 shadow-md">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 19v-8.93a2 2 0 01.89-1.664l8-4a2 2 0 011.78 0l8 4A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                    </svg>
+                    Send Transmit Envelope
+                  </button>
+                </form>
+
+                <!-- Status Feedback Overlay -->
+                <div id="form-success-overlay"
+                  class="hidden animate-fade-in p-4 bg-emerald-800/10 border border-emerald-800/35 rounded-xl text-center mt-3">
+                  <svg class="w-8 h-8 text-emerald-800 mx-auto mb-1.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-xs font-bold text-emerald-900">Transmission Dispatched!</p>
+                  <p class="text-[10px] text-[#1A2340]/70 mt-1">Your envelope was folded, parsed, and logged.</p>
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Left Page: Left-aligned) -->
+              <div
+                class="flex justify-start items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 11</span>
+              </div>
+              <div class="corner-curl-left" onclick="prevPage()"></div>
+            </div>
+
+          </div>
+
+          <!-- ===================================== -->
+          <!-- SHEET 7: EPILOGUE DETAILS (CHAPTER 7 - PAGE 12) & BACK COVER -->
+          <!-- ===================================== -->
+          <div class="sheet" id="sheet7" style="z-index: 1;" data-tab-group="epilogue"
+            data-spread-name="Back Cover colophon">
+
+            <!-- Page 7 Front: Chapter 7: Letters to the Horizon - Page 12 (Closing Note) -->
+            <div class="page front paper-page flex flex-col justify-between">
+              <div>
+                <span class="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER
+                  VII : LETTERS TO THE HORIZON</span>
+                <h3 class="text-2xl font-bold mt-1 font-headline text-[#1A2340]">A Written Journey</h3>
+                <div class="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+
+                <p class="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90 mb-4">
+                  Thank you for opening this codex. The boundary between digital rendering and physical design is merely
+                  a matter of architecture, perspective, and clean interaction matrices.
+                </p>
+
+                <p class="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90 mb-4">
+                  I invite you to connect directly through the envelope dispatched on Page 11. Let us map out the next
+                  chapters of our digital systems, interfaces, and ML deployments together.
+                </p>
+
+                <div
+                  class="mt-6 flex flex-col items-center justify-center p-4 border border-[#4E4B46]/20 rounded-xl bg-black/5 text-center">
+                  <span class="font-headline italic text-lg text-[var(--paper-primary)] mb-1">Raziel Sevilla</span>
+                  <span class="text-[10px] uppercase font-mono tracking-widest text-[#1A2340]/60">Full-Stack
+                    Architect</span>
+                </div>
+              </div>
+
+              <!-- Page Footer indicator (Right Page: Right-aligned) -->
+              <div
+                class="flex justify-end items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono">
+                <span>Page 12</span>
+              </div>
+              <div class="corner-curl" onclick="event.stopPropagation(); nextPage();"></div>
+            </div>
+
+            <!-- Cover Back side -->
+            <div
+              class="page back leather-cover flex flex-col justify-between items-center relative overflow-hidden text-center cursor-pointer"
+              onclick="prevPage()">
+              <div class="cover-rim absolute inset-4 flex flex-col justify-between p-8">
+                <div>
+                  <h4 class="text-sm tracking-[0.2em] font-medium text-[#E8C77A] font-headline">BOOKFOLIO</h4>
+                  <div class="w-12 h-px bg-[#D4A574]/30 mx-auto mt-2"></div>
+                </div>
+
+                <div class="my-auto">
+                  <div
+                    class="w-16 h-16 mx-auto mb-4 border border-[#D4A574]/20 rounded-full flex items-center justify-center text-[#D4A574]/70">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <h3 class="text-xl font-bold font-headline text-[#E8C77A]">COLOPHON</h3>
+                  <p class="text-xs text-[#F4EAD5]/80 max-w-xs mx-auto mt-2 font-body leading-relaxed">
+                    Hand-compiled using HTML5 CSS3 preservation matrices and dynamic synthesized physical nodes in 2026.
+                  </p>
+                </div>
+
+                <div class="text-[10px] tracking-wider text-[#D4A574] font-body">
+                  &copy; 2026 RAZIEL SEVILLA. ALL RIGHTS RESERVED.
+                </div>
+              </div>
+              <div class="corner-curl-left" onclick="event.stopPropagation(); prevPage();"></div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom HUD Panel (Centered Navigation Controls) -->
+  <footer class="theme-header-footer w-full px-6 py-4 border-t backdrop-blur-md flex items-center justify-center z-30">
+    <!-- Main Navigation controls -->
+    <div class="flex items-center space-x-6">
+      <button onclick="prevPage()"
+        class="p-3 bg-[#1A2340]/40 hover:bg-[#1A2340]/80 border border-[#4E4B46] rounded-full transition-all flex items-center justify-center shadow-lg group hover:-translate-x-1"
+        aria-label="Previous Page">
+        <svg class="w-5 h-5 text-[#F4EAD5] group-hover:text-[#D4A574]" fill="none" stroke="currentColor"
+          stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- Active Page Progress Bar Indicators -->
+      <div class="flex flex-col items-center">
+        <div id="progress-indicator-container" class="flex space-x-1 mb-1">
+          <!-- Dynamically generated by JavaScript -->
+        </div>
+        <span id="page-tag" class="text-[10px] font-mono text-[#D4A574] tracking-widest uppercase">COVER AT REST</span>
+      </div>
+
+      <button onclick="nextPage()"
+        class="p-3 bg-[#1A2340]/40 hover:bg-[#1A2340]/80 border border-[#4E4B46] rounded-full transition-all flex items-center justify-center shadow-lg group hover:translate-x-1"
+        aria-label="Next Page">
+        <svg class="w-5 h-5 text-[#F4EAD5] group-hover:text-[#D4A574]" fill="none" stroke="currentColor"
+          stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- SYSTEM ENGINE SCRIPT -->
+  <script>
+    // State management
+    let currentSheetIndex = 0; // 0: Closed Cover, 1: Sheet 1 Flipped, etc.
+    let sheets = Array.from(document.querySelectorAll('.sheet'));
+    const totalSheets = sheets.length;
+    let soundEnabled = true;
+
+    // Initialize Progress Indicators
+    const indicatorContainer = document.getElementById('progress-indicator-container');
+    if (indicatorContainer) {
+      indicatorContainer.innerHTML = '';
+      for (let i = 0; i <= totalSheets; i++) {
+        const span = document.createElement('span');
+        span.className = 'step-indicator w-8 h-1 rounded-full bg-[#4E4B46]/50 transition-all';
+        indicatorContainer.appendChild(span);
+      }
+    }
+
+    // High Density Portfolio Data aligned with branding colors (8 projects)
+    const portfolioItems = [
+      {
+        id: 'kumpirma',
+        title: 'Kumpirma',
+        category: 'dev',
+        tag: 'Blockchain / AI',
+        client: 'Academic Project',
+        tech: 'TensorFlow.js / Blockchain / Laravel',
+        desc: 'Designed a signature verification framework combining a Pix2Pix Conditional GAN architecture for supervised noise isolation with an Ethereum-compatible hash ledger. Documents are fingerprinted on upload; tamper detection runs client-side without exposing the original file to the server.',
+        color: 'from-[#243054] to-[#1A2340]',
+        graphic: `<svg class="w-16 h-16 text-[#D4A574]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>`
+      },
+      {
+        id: 'toka',
+        title: 'Toka',
+        category: 'dev',
+        tag: 'Gamification / State Machine',
+        client: 'Technopreneurship',
+        tech: 'React / Laravel / MySQL',
+        desc: 'Modeled a virtual coin economy where household tasks yield tokens redeemable for privileges. Used a state machine for task lifecycle to prevent race conditions between concurrent family members.',
+        color: 'from-[#4E4B46] to-[#1A2340]',
+        graphic: `<svg class="w-16 h-16 text-[#E8C77A]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>`
+      },
+      {
+        id: 'cryption',
+        title: 'Cryption',
+        category: 'dev',
+        tag: 'Cryptography',
+        client: 'Personal Project',
+        tech: 'Rust',
+        desc: 'Developed a memory-safe encryption platform featuring the proprietary Chained Algorithm. Implemented industry-standard Argon2id key stretching and HMAC-SHA256 integrity protection.',
+        color: 'from-[#D4A574] to-[#1A2340]',
+        graphic: `<svg class="w-16 h-16 text-[#F4EAD5]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" /></svg>`
+      },
+      {
+        id: 'prioritask',
+        title: 'PrioriTask',
+        category: 'design',
+        tag: 'Algorithms / Chrome Ext',
+        client: 'Personal Project',
+        tech: 'React / TS / Vitest',
+        desc: 'Engineered a React-based Chrome extension that dynamically ranks student workloads. Built a custom deterministic scoring engine utilizing multiple algorithms to optimize task execution.',
+        color: 'from-[#243054] to-[#4E4B46]',
+        graphic: `<svg class="w-16 h-16 text-[#D4A574]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>`
+      },
+      {
+        id: 'helios',
+        title: 'Helios IoT Grid',
+        category: 'dev',
+        tag: 'Systems Monitor',
+        client: 'Helios Power Corp',
+        tech: 'C++ / WebSockets / InfluxDB',
+        desc: 'High-frequency logging pipeline designed for solar inverter nodes. Processes up to 5,000 grid metrics per second, plotting telemetry structures on a low-latency web workspace canvas.',
+        color: 'from-[#D4A574] to-[#1A2340]',
+        graphic: `<svg class="w-16 h-16 text-[#E8C77A]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>`
+      },
+      {
+        id: 'novasynth',
+        title: 'Nova DSP Synth',
+        category: 'design',
+        tag: 'Creative Coding',
+        client: 'Personal Experiment',
+        tech: 'WebAudio API / WASM',
+        desc: 'Web-based modular DSP synthesizer leveraging WebAssembly. Built with a custom physics-guided keyboard UI designed to simulate string tension and tactile feedback.',
+        color: 'from-[#243054] to-[#4E4B46]',
+        graphic: `<svg class="w-16 h-16 text-[#F4EAD5]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2" /></svg>`
+      },
+      {
+        id: 'atlas',
+        title: 'Atlas Spatial GIS',
+        category: 'design',
+        tag: 'Interactive Cartography',
+        client: 'Mapworks Lab',
+        tech: 'D3.js / Leaflet / GeoJSON',
+        desc: 'Interactive vector map visualization. Translates raw coordinate sheets into smooth physical animations, preserving aspect ratios and geographical properties.',
+        color: 'from-[#4E4B46] to-[#1A2340]',
+        graphic: `<svg class="w-16 h-16 text-[#D4A574]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7l5-3 5.447 2.724A1 1 0 0120 7.618v10.764a1 1 0 01-1.447.894L15 17l-6 3z" /></svg>`
+      },
+      {
+        id: 'chronos',
+        title: 'Chronos Engine',
+        category: 'dev',
+        tag: 'Time-Series Matrix',
+        client: 'Productivity Labs',
+        tech: 'Rust / gRPC / Svelte',
+        desc: 'Ultra-low overhead time-tracking database. Employs atomic bitwise maps to serialize nested timeline arrays without hitting file storage boundaries.',
+        color: 'from-[#243054] to-[#1A2340]',
+        graphic: `<svg class="w-16 h-16 text-[#E8C77A]" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
+      }
+    ];
+
+    // High Density Certified Credentials Data (6 verified certs)
+    const certificatesData = [
+      {
+        id: 'tensorflow',
+        title: 'TensorFlow Developer Certificate',
+        issuer: 'Google Brain Integration',
+        tag: 'Supervised Deep Learning, NLP & Convolutional Filters'
+      },
+      {
+        id: 'aws',
+        title: 'AWS Certified Solutions Architect',
+        issuer: 'Cloud Engineering Academy',
+        tag: 'Redundant VPC Systems, IAM & High-Performance Microservices'
+      },
+      {
+        id: 'rust',
+        title: 'Memory-Safe Systems Integrator',
+        issuer: 'Rust Systems Integrations Spec',
+        tag: 'Lifetime Scopes, Concurrent Programming & WASM Integrations'
+      },
+      {
+        id: 'kubernetes',
+        title: 'Certified Kubernetes Administrator',
+        issuer: 'Cloud Native Computing Foundation',
+        tag: 'Declarative Orchestration, Pod Lifecycles & Container Safety'
+      },
+      {
+        id: 'stanford_algo',
+        title: 'Stanford Advanced Algorithms',
+        issuer: 'Stanford Online Academy',
+        tag: 'Dynamic Programming, Graph Analytics & Deterministic Solvers'
+      },
+      {
+        id: 'blockchain_dev',
+        title: 'Certified Ethereum Developer',
+        issuer: 'ConsenSys Academy',
+        tag: 'Smart Contract Lifecycles, Gas Optimization & EVM Architectures'
+      }
+    ];
+
+    // High Density Guestbook Mock Database State (8 entries)
+    let guestbookEntries = [
+      { name: "Sonia Reed", message: "The WebAudio flip synthesizer sound is incredible!", emoji: "🚀", date: "Just now" },
+      { name: "Julian Vance", message: "Absolutely gorgeous. The 3D layout feels remarkably physical.", emoji: "✨", date: "3 hours ago" },
+      { name: "Linus Miller", message: "Using standard CSS rotates for page turns makes it load instantly.", emoji: "🔥", date: "1 day ago" },
+      { name: "Dr. Clara Wu", message: "An exemplary integration of typography and motion physics.", emoji: "✍️", date: "2 days ago" },
+      { name: "Marcus Thorne", message: "The clean stiff page flips make it highly professional to read.", emoji: "🚀", date: "3 days ago" },
+      { name: "Elena Rostova", message: "The credentials verification page is clean, clear, and perfectly readable.", emoji: "✨", date: "4 days ago" },
+      { name: "Arthur Pendelton", message: "Brilliant spatial mapping for a web developer portfolio!", emoji: "🔥", date: "1 week ago" },
+      { name: "Aria K.", message: "Outstanding. Bookfolio really raises the bar for digital resumes.", emoji: "✍️", date: "1 week ago" }
+    ];
+
+    let currentSelectedEmoji = "✍️";
+
+    // ----------------- WEB AUDIO SYNTH NODE -----------------
+    function playPageFlipAudio() {
+      if (!soundEnabled) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+
+        // Friction Paper Rustle Synth
+        const duration = 0.45;
+        const bufferSize = ctx.sampleRate * duration;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const noiseNode = ctx.createBufferSource();
+        noiseNode.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.Q.value = 4.0;
+
+        filter.frequency.setValueAtTime(1400, ctx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(350, ctx.currentTime + duration - 0.05);
+
+        const gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.06);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+        noiseNode.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        noiseNode.start();
+        noiseNode.stop(ctx.currentTime + duration);
+
+      } catch (err) {
+        console.warn("WebAudio context launch deferred: waiting for user action.", err);
+      }
+    }
+
+    // Toggle Sound settings HUD
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const onIcon = document.getElementById('sound-icon-on');
+      const offIcon = document.getElementById('sound-icon-off');
+      if (soundEnabled) {
+        onIcon.classList.remove('hidden');
+        offIcon.classList.add('hidden');
+        playPageFlipAudio();
+      } else {
+        onIcon.classList.add('hidden');
+        offIcon.classList.remove('hidden');
+      }
+    }
+
+    // ----------------- PAGE FLIP MECHANICS -----------------
+    let isTransitioning = false;
+
+    function nextPage() {
+      if (isTransitioning) return;
+      if (currentSheetIndex < totalSheets) {
+        currentSheetIndex++;
+        updateBookState();
+        playPageFlipAudio();
+      }
+    }
+
+    // Go backward one sheet
+    function prevPage() {
+      if (isTransitioning) return;
+      if (currentSheetIndex > 0) {
+        currentSheetIndex--;
+        updateBookState();
+        playPageFlipAudio();
+      }
+    }
+
+    function goToSheet(targetIndex) {
+      if (isTransitioning) return;
+      if (targetIndex === currentSheetIndex) return;
+
+      isTransitioning = true;
+      const steps = Math.abs(targetIndex - currentSheetIndex);
+      const direction = targetIndex > currentSheetIndex ? 1 : -1;
+
+      let delay = 0;
+      for (let i = 0; i < steps; i++) {
+        const currentStep = i;
+        setTimeout(() => {
+          try {
+            currentSheetIndex += direction;
+            updateBookState();
+            playPageFlipAudio();
+          } catch (e) {
+            console.error(e);
+          } finally {
+            if (currentStep === steps - 1) {
+              isTransitioning = false;
+            }
+          }
+        }, delay);
+        delay += 250;
+      }
+    }
+
+    function updateBookState() {
+      const bookNode = document.getElementById('book');
+      if (!bookNode) return;
+
+      sheets.forEach((sheet, index) => {
+        if (!sheet) return;
+        if (index < currentSheetIndex) {
+          sheet.classList.add('flipped');
+          sheet.style.zIndex = index + 1;
+        } else {
+          sheet.classList.remove('flipped');
+          sheet.style.zIndex = totalSheets - index;
+        }
+      });
+
+      // SLIDE MECHANICS FOR TRUE CENTER ALIGNMENT
+      if (currentSheetIndex === 0) {
+        // Book Closed (Cover showing) -> Centered right half (translate book to left)
+        bookNode.style.transform = 'rotateX(10deg) rotateY(-5deg) translateX(-25%)';
+      } else if (currentSheetIndex === totalSheets) {
+        // Book Closed (Back cover showing) -> Centered left half (translate book to right)
+        bookNode.style.transform = 'rotateX(10deg) rotateY(5deg) translateX(25%)';
+      } else {
+        // Book Open -> Spine matches absolute viewport center
+        bookNode.style.transform = 'rotateX(10deg) rotateY(0deg) translateX(0%)';
+      }
+
+      updateProgressIndicators();
+    }
+
+    function updateProgressIndicators() {
+      const indicators = document.querySelectorAll('.step-indicator');
+      const pageTag = document.getElementById('page-tag');
+      const bookTabs = document.querySelectorAll('.book-tab');
+
+      // Sync progress bar indicators
+      indicators.forEach((bar, index) => {
+        if (index <= currentSheetIndex) {
+          bar.classList.add('bg-[#D4A574]');
+          bar.classList.remove('bg-[#4E4B46]/50');
+        } else {
+          bar.classList.remove('bg-[#D4A574]');
+          bar.classList.add('bg-[#4E4B46]/50');
+        }
+      });
+
+      // Sync tabs to current active sheet spreads
+      bookTabs.forEach((tab) => {
+        const index = parseInt(tab.getAttribute('data-tab-index'));
+        if (index === currentSheetIndex) {
+          tab.classList.add('active-tab');
+        } else {
+          tab.classList.remove('active-tab');
+        }
+      });
+
+      // Set readable active chapter labels mapped to the page structure without page numbers
+      const labels = [
+        "Cover at Rest",
+        "Chapter I: The Scribe's Awakening",
+        "Chapter II: Trails & Chronicles",
+        "Chapter III: The Arcanum of Crafts",
+        "Chapter IV: Relics of Creation",
+        "Chapter V: Seals of Validation",
+        "Chapter VI: Echoes from the Ledger",
+        "Chapter VII: Letters to the Horizon",
+        "Closing Colophon"
+      ];
+      if (pageTag) {
+        pageTag.innerText = labels[currentSheetIndex] || "NAVIGATING CODEX";
+      }
+    }
+
+    // ----------------- INTERACTIVE INNER CAPABILITIES -----------------
+    function showSkillInfo(skillType) {
+      const detailBox = document.getElementById('skill-detail-box');
+      playPageFlipAudio();
+      if (skillType === 'interface') {
+        detailBox.innerHTML = `
+          <span class="font-bold block text-[var(--paper-primary)] mb-1">Interface Layer:</span>
+          Chosen for composability — every UI concern is an isolated, testable unit that composes into a coherent, maintainable whole. (React, JavaScript ES6+, HTML5/CSS3)
+        `;
+      } else if (skillType === 'systems') {
+        detailBox.innerHTML = `
+          <span class="font-bold block text-[var(--paper-primary)] mb-1">Systems &amp; Data Layer:</span>
+          Structured around the principle that data integrity and clear contracts between layers prevent entire classes of production bugs. (Laravel, MySQL, REST API, Node.js)
+        `;
+      } else if (skillType === 'infra') {
+        detailBox.innerHTML = `
+          <span class="font-bold block text-[var(--paper-primary)] mb-1">Infrastructure &amp; Cloud:</span>
+          Adopted to understand the full deployment surface — because software that cannot be shipped reliably is software that does not exist. (AWS, Vercel, Docker, CI/CD)
+        `;
+      }
+    }
+
+    // Interactive Certificates details switch
+    function showCertInfo(certType) {
+      const detailBox = document.getElementById('cert-detail-box');
+      playPageFlipAudio();
+      const cert = certificatesData.find(c => c.id === certType);
+      if (cert) {
+        detailBox.innerHTML = `
+          <span class="font-bold block text-[var(--paper-primary)] mb-1">${cert.title}:</span>
+          ${cert.tag}. Cryptographically logged with strict multi-node validity signatures.
+        `;
+      } else {
+        detailBox.innerHTML = `
+          <span class="font-bold block text-[var(--paper-primary)] mb-1">Verified Credentials:</span>
+          Select any certified credential card on the adjacent page to review full cryptographic authorization data.
+        `;
+      }
+    }
+
+    // Render projects list in grid (supports scrolling fluidly)
+    function renderPortfolio(filter = 'all') {
+      const grid = document.getElementById('portfolio-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const filtered = filter === 'all' ? portfolioItems : portfolioItems.filter(p => p.category === filter);
+
+      filtered.forEach(proj => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-xl border border-[#4E4B46]/20 bg-black/5 hover:bg-black/10 hover:border-[var(--paper-primary)]/40 cursor-pointer transition-all flex flex-col justify-between h-[105px] group`;
+        div.onclick = () => selectPortfolioItem(proj.id);
+        div.innerHTML = `
+          <div>
+            <span class="text-[9px] uppercase tracking-wider font-mono text-[var(--paper-primary)] font-bold">${proj.tag}</span>
+            <h4 class="font-bold text-xs leading-snug text-[#1A2340] group-hover:text-[var(--paper-primary)] font-headline">${proj.title}</h4>
+          </div>
+          <span class="text-[10px] text-[#1A2340]/60 font-mono flex items-center justify-between">
+            <span>View Spec</span>
+            <span>&rarr;</span>
+          </span>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    // Render certificates dynamically to let the scroll view function beautifully
+    function renderCertificates() {
+      const container = document.getElementById('certificates-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      certificatesData.forEach(cert => {
+        const div = document.createElement('div');
+        div.className = "p-2.5 bg-black/5 rounded-xl border border-[#4E4B46]/10 hover:border-[var(--paper-primary)]/40 hover:bg-black/10 transition-all cursor-pointer flex justify-between items-center";
+        div.onclick = () => showCertInfo(cert.id);
+        div.innerHTML = `
+          <div>
+            <h4 class="text-xs font-bold text-[#1A2340] font-headline">${cert.title}</h4>
+            <span class="text-[9px] text-[var(--paper-primary)] font-mono font-bold">${cert.issuer}</span>
+          </div>
+          <svg class="w-4 h-4 text-[var(--paper-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function selectPortfolioItem(projId) {
+      const item = portfolioItems.find(p => p.id === projId);
+      if (!item) return;
+
+      playPageFlipAudio();
+
+      document.getElementById('showcase-category').innerText = item.tag;
+      document.getElementById('showcase-title').innerText = item.title;
+      document.getElementById('showcase-desc').innerText = item.desc;
+      document.getElementById('showcase-client').innerText = item.client;
+      document.getElementById('showcase-tech').innerText = item.tech;
+
+      const frame = document.getElementById('showcase-graphic');
+      if (frame && frame.parentNode) {
+        frame.parentNode.className = `relative w-full h-32 rounded-xl bg-gradient-to-br ${item.color} border border-[#4E4B46]/20 p-0.5 overflow-hidden mb-4 shadow-md transition-all`;
+        frame.innerHTML = item.graphic;
+      }
+    }
+
+    function filterPortfolio(category) {
+      playPageFlipAudio();
+      renderPortfolio(category);
+      const filters = ['all', 'dev', 'design'];
+      filters.forEach(f => {
+        const el = document.getElementById(`filter-${f}`);
+        if (el) {
+          if (f === category) {
+            el.className = "px-2.5 py-1 rounded-md bg-[#1A2340] text-[#F4EAD5] font-medium transition-all";
+          } else {
+            el.className = "px-2.5 py-1 rounded-md bg-black/5 hover:bg-black/10 border border-[#4E4B46]/20 text-[#1A2340] font-medium transition-all";
+          }
+        }
+      });
+    }
+
+    // ----------------- GUESTBOOK LEDGER ENGINE -----------------
+    // Render comments list
+    function renderGuestbook() {
+      const container = document.getElementById('guestbook-list');
+      if (!container) return;
+      container.innerHTML = '';
+      guestbookEntries.forEach(entry => {
+        const item = document.createElement('div');
+        item.className = "p-2 bg-black/5 rounded-lg border border-[#4E4B46]/10 text-[11px] leading-relaxed";
+        item.innerHTML = `
+          <div class="flex justify-between items-center mb-0.5 font-bold text-[var(--paper-primary)]">
+            <span>${entry.emoji} ${entry.name}</span>
+            <span class="text-[9px] text-[#1A2340]/60 font-mono">${entry.date}</span>
+          </div>
+          <p class="text-[#1A2340]/80 font-body">${entry.message}</p>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // Emoji reaction selector
+    function selectEmoji(emoji) {
+      currentSelectedEmoji = emoji;
+      const display = document.getElementById('selected-emoji');
+      if (display) display.innerText = emoji;
+      playPageFlipAudio();
+    }
+
+    // Submit a testimonial greeting
+    function submitComment() {
+      const nameInp = document.getElementById('visitor-name');
+      const msgInp = document.getElementById('visitor-message');
+
+      if (!nameInp || !msgInp || !nameInp.value.trim() || !msgInp.value.trim()) {
+        return;
+      }
+
+      const newEntry = {
+        name: nameInp.value.trim(),
+        message: msgInp.value.trim(),
+        emoji: currentSelectedEmoji,
+        date: "Just now"
+      };
+
+      guestbookEntries.unshift(newEntry);
+      renderGuestbook();
+
+      nameInp.value = '';
+      msgInp.value = '';
+      playPageFlipAudio();
+    }
+
+    // ----------------- CONTACT FORM SIMULATION -----------------
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const mailEl = document.getElementById('contact-email');
+      const descEl = document.getElementById('contact-message');
+      if (!mailEl || !descEl) return;
+
+      const mail = mailEl.value;
+      const desc = descEl.value;
+
+      if (!mail || !desc) return;
+
+      playPageFlipAudio();
+
+      const form = document.getElementById('contact-form');
+      if (form) form.classList.add('hidden');
+
+      const successNode = document.getElementById('form-success-overlay');
+      if (successNode) successNode.classList.remove('hidden');
+
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(120, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 1.2);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.2);
+      } catch (e) { }
+    }
+
+    // ----------------- TOUCH SWIPE RESPONSIVELENESS -----------------
+    let startX = 0;
+    const sceneNode = document.querySelector('.scene');
+
+    if (sceneNode) {
+      sceneNode.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+
+      sceneNode.addEventListener('touchend', (e) => {
+        const diffX = e.changedTouches[0].clientX - startX;
+        if (Math.abs(diffX) > 80) {
+          if (diffX < 0) {
+            nextPage();
+          } else {
+            prevPage();
+          }
+        }
+      }, { passive: true });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        nextPage();
+      } else if (e.key === 'ArrowLeft') {
+        prevPage();
+      }
+    });
+
+    // ----------------- AUTO-SCALING LOGIC -----------------
+    function resizeBookViewport() {
+      const container = document.getElementById('book-scaler');
+      if (!container) return;
+
+      const baseWidth = 1000;
+      const baseHeight = 650;
+      const padX = 32;
+      const padY = 160;
+
+      const scaleX = (window.innerWidth - padX) / baseWidth;
+      const scaleY = (window.innerHeight - padY) / baseHeight;
+      const scale = Math.min(scaleX, scaleY, 1);
+
+      container.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('resize', resizeBookViewport);
+
+    window.onload = function () {
+      renderPortfolio('all');
+      selectPortfolioItem('kumpirma');
+      renderCertificates();
+      renderGuestbook();
+      updateBookState();
+      resizeBookViewport();
+    };
+  </script>
+</body>
+
+</html>
