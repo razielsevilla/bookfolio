@@ -1,0 +1,314 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter);
+  --font-headline: var(--font-cormorant);
+  --font-body: var(--font-inter);
+}
+
+:root {
+  --bg-color: #1A2340;
+  --text-color: #F4EAD5;
+  --primary-color: #D4A574;
+  --accent-color: #E8C77A;
+  --surface-color: #243054;
+  --border-color: #4E4B46;
+  --paper-primary: #94683c;
+  --bg-gradient: radial-gradient(circle, #243054 0%, #1A2340 100%);
+  --spine-bg: linear-gradient(90deg, #12192e 0%, var(--primary-color) 50%, #12192e 100%);
+  --cover-border: var(--accent-color);
+}
+
+body {
+  background: var(--bg-gradient) !important;
+  color: var(--text-color) !important;
+  font-family: var(--font-inter), sans-serif;
+  overflow: hidden;
+}
+
+/* Universal font mapping */
+h1, h2, h3, h4, .font-headline {
+  font-family: var(--font-cormorant), serif;
+}
+
+p, span, label, input, textarea, select, button, .font-body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Universal Smooth Transitions */
+* {
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Header & Footer layout integration */
+.theme-header-footer {
+  background-color: rgba(36, 48, 84, 0.8) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+/* 3D Scene setup */
+.scene {
+  perspective: 2000px;
+  perspective-origin: 50% 50%;
+}
+
+/* 3D Book wrapper with slide adjustments */
+.book {
+  position: relative;
+  width: 960px;
+  height: 600px;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  border-radius: 8px;
+}
+
+/* Spine component with realistic grounding shadow */
+.book-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 32px;
+  height: 100%;
+  transform: translateX(-50%) translateZ(-1px);
+  background: var(--spine-bg);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6), 0 10px 25px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  border-radius: 4px;
+}
+
+/* Book-Themed Side Navigation Tabs - Layered within dynamic sheets */
+.book-tab {
+  position: absolute;
+  left: 474px;
+  width: 52px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transform: translateZ(-2px);
+  border-radius: 0 12px 12px 0;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(90deg, var(--text-color) 0%, #e2d6bc 100%);
+  border: 1px solid var(--primary-color);
+  border-left: none;
+  color: var(--paper-primary);
+  transition: left 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+    background-color 0.4s ease,
+    color 0.4s ease;
+  pointer-events: auto;
+}
+
+.book-tab:hover {
+  left: 482px;
+  transform: translateZ(-1px);
+  color: var(--bg-color);
+  background: var(--primary-color);
+}
+
+.book-tab.active-tab {
+  left: 482px;
+  transform: translateZ(4px);
+  z-index: 6;
+  background: var(--primary-color);
+  color: var(--bg-color);
+  border-color: var(--accent-color);
+  box-shadow: 4px 8px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* --- FLIPPED SHEET NAV TAB OVERRIDES --- */
+.sheet.flipped .book-tab {
+  transform: translateZ(2px);
+}
+.sheet.flipped .book-tab:hover {
+  left: 482px;
+  transform: translateZ(1px);
+}
+.sheet.flipped .book-tab.active-tab {
+  left: 482px;
+  transform: translateZ(-4px);
+}
+.sheet.flipped .book-tab span {
+  transform: rotateY(180deg);
+}
+
+/* Tooltip descriptor extending out from tabs */
+.tab-tooltip {
+  position: absolute;
+  right: 60px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--primary-color);
+}
+
+.book-tab:hover .tab-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+.sheet.flipped .book-tab .tab-tooltip {
+  transform: rotateY(180deg) translateX(-10px);
+}
+.sheet.flipped .book-tab:hover .tab-tooltip {
+  transform: rotateY(180deg) translateX(0);
+}
+
+/* Sheet with Classic Direct 3D Easing */
+.sheet {
+  position: absolute;
+  width: 540px;
+  height: 600px;
+  left: 480px;
+  top: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: 5;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.page {
+  position: absolute;
+  width: 480px;
+  height: 100%;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  padding: 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.page.front {
+  transform: rotateY(0deg);
+  border-radius: 0 8px 8px 0;
+}
+.page.back {
+  transform: rotateY(180deg);
+  border-radius: 8px 0 0 8px;
+}
+.sheet.flipped {
+  transform: rotateY(-180deg);
+}
+
+/* Inner pages */
+.paper-page {
+  background-color: var(--text-color);
+  background-image: radial-gradient(circle at center, #faf5e8 0%, #ecdcb9 100%);
+  color: var(--bg-color) !important;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+.page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 55px;
+  pointer-events: none;
+  z-index: 10;
+}
+.page.front::after {
+  left: 0;
+  background: linear-gradient(90deg, rgba(36, 48, 84, 0.22) 0%, rgba(36, 48, 84, 0.04) 50%, rgba(0, 0, 0, 0) 100%);
+}
+.page.back::after {
+  right: 0;
+  background: linear-gradient(-90deg, rgba(36, 48, 84, 0.22) 0%, rgba(36, 48, 84, 0.04) 50%, rgba(0, 0, 0, 0) 100%);
+}
+
+.leather-cover {
+  background: linear-gradient(135deg, var(--bg-color) 0%, #10162b 100%);
+  color: var(--accent-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 25px 55px rgba(0, 0, 0, 0.55), inset 0 0 40px rgba(0, 0, 0, 0.6);
+}
+.cover-rim {
+  border: 3px double var(--cover-border);
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+.page-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.page-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.page-scroll::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+.ambient-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% -20%, rgba(212, 165, 116, 0.15) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.corner-curl {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(135deg, transparent 45%, rgba(0, 0, 0, 0.1) 50%, rgba(255, 255, 255, 0.6) 65%, transparent 80%);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 40;
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.corner-curl:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+.corner-curl-left {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(225deg, transparent 45%, rgba(0, 0, 0, 0.1) 50%, rgba(255, 255, 255, 0.6) 65%, transparent 80%);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 40;
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.corner-curl-left:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+.interactive-cue {
+  animation: pulse-ring 2s infinite ease-in-out;
+}
