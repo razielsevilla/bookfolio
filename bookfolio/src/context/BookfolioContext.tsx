@@ -38,8 +38,7 @@ export interface Skill {
 
 export interface Experience {
   id: string;
-  startDate: string;
-  endDate: string;
+  yearRange: string;
   title: string;
   description: string;
 }
@@ -123,38 +122,33 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
 
   const goToSheet = useCallback((targetIndex: number) => {
     if (isTransitioning) return;
+    if (targetIndex === currentSheetIndex) return;
+      
+    setIsTransitioning(true);
+    const steps = Math.abs(targetIndex - currentSheetIndex);
+    const direction = targetIndex > currentSheetIndex ? 1 : -1;
+
+    // We handle the immediate first step
+    setCurrentSheetIndex(currentSheetIndex + direction);
+    playPageFlipAudio();
     
-    // Because we need to know current state, we use functional update
-    setCurrentSheetIndex(prevIndex => {
-      if (targetIndex === prevIndex) return prevIndex;
-      
-      setIsTransitioning(true);
-      const steps = Math.abs(targetIndex - prevIndex);
-      const direction = targetIndex > prevIndex ? 1 : -1;
-
-      // We handle the immediate first step
-      playPageFlipAudio();
-      
-      let delay = 250;
-      for (let i = 1; i < steps; i++) {
-        const currentStep = i;
-        setTimeout(() => {
-          setCurrentSheetIndex(p => p + direction);
-          playPageFlipAudio();
-          if (currentStep === steps - 1) {
-            setIsTransitioning(false);
-          }
-        }, delay);
-        delay += 250;
-      }
-      
-      if (steps === 1) {
-        setTimeout(() => setIsTransitioning(false), 250);
-      }
-
-      return prevIndex + direction;
-    });
-  }, [isTransitioning, playPageFlipAudio]);
+    let delay = 250;
+    for (let i = 1; i < steps; i++) {
+      const currentStep = i;
+      setTimeout(() => {
+        setCurrentSheetIndex(p => p + direction);
+        playPageFlipAudio();
+        if (currentStep === steps - 1) {
+          setIsTransitioning(false);
+        }
+      }, delay);
+      delay += 250;
+    }
+    
+    if (steps === 1) {
+      setTimeout(() => setIsTransitioning(false), 250);
+    }
+  }, [isTransitioning, currentSheetIndex, playPageFlipAudio]);
 
   return (
     <BookfolioContext.Provider value={{

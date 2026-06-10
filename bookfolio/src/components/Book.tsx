@@ -66,10 +66,7 @@ export default function Book() {
             {/* Sheet 3 */}
             <Sheet 
               sheetIndex={2} 
-              tabs={[
-                { title: "III", tooltip: "III: Arcanum", top: 180, target: 3 },
-                { title: "IV", tooltip: "IV: Relics", top: 240, target: 4 }
-              ]}
+              tabs={[{ title: "III", tooltip: "III: Arcanum", top: 180, target: 2 }]}
             >
               <Page side="front" pageNumber={4}>
                 <Page4Skills />
@@ -80,7 +77,10 @@ export default function Book() {
             </Sheet>
 
             {/* Sheet 4 */}
-            <Sheet sheetIndex={3}>
+            <Sheet 
+              sheetIndex={3}
+              tabs={[{ title: "IV", tooltip: "IV: Relics", top: 240, target: 3 }]}
+            >
               <Page side="front" pageNumber={6}>
                 <Page6Projects1 />
               </Page>
@@ -92,7 +92,7 @@ export default function Book() {
             {/* Sheet 5 */}
             <Sheet 
               sheetIndex={4} 
-              tabs={[{ title: "V", tooltip: "V: Seals", top: 300, target: 5 }]}
+              tabs={[{ title: "V", tooltip: "V: Seals", top: 300, target: 4 }]}
             >
               <Page side="front" pageNumber={8}>
                 <Page8Credentials />
@@ -105,10 +105,7 @@ export default function Book() {
             {/* Sheet 6 */}
             <Sheet 
               sheetIndex={5} 
-              tabs={[
-                { title: "VI", tooltip: "VI: Echoes", top: 360, target: 6 },
-                { title: "VII", tooltip: "VII: Letters", top: 420, target: 7 }
-              ]}
+              tabs={[{ title: "VI", tooltip: "VI: Echoes", top: 360, target: 5 }]}
             >
               <Page side="front" pageNumber={10}>
                 <Page10GuestbookList />
@@ -119,7 +116,10 @@ export default function Book() {
             </Sheet>
 
             {/* Sheet 7 */}
-            <Sheet sheetIndex={6}>
+            <Sheet 
+              sheetIndex={6}
+              tabs={[{ title: "VII", tooltip: "VII: Letters", top: 420, target: 6 }]}
+            >
               <Page side="front" pageNumber={12}>
                 <Page12Colophon />
               </Page>
