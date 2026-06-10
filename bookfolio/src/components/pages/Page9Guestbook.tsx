@@ -1,7 +1,9 @@
 "use client";
 import { useState } from 'react';
+import { useBookfolio } from '../../context/BookfolioContext';
 
 export default function Page9Guestbook() {
+  const { data } = useBookfolio();
   const [selectedEmoji, setSelectedEmoji] = useState('✍️');
 
   const handleSubmit = (e: React.FormEvent) => {

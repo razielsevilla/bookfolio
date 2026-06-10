@@ -2,6 +2,68 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { usePageFlipAudio } from '../hooks/usePageFlipAudio';
 
+export interface Project {
+  id: string;
+  title: string;
+  category: string;
+  tag: string;
+  client: string;
+  tech: string;
+  desc: string;
+  color: string;
+  graphic: string;
+}
+
+export interface Certificate {
+  id: string;
+  title: string;
+  issuer: string;
+  tag: string;
+}
+
+export interface GuestbookEntry {
+  name: string;
+  message: string;
+  emoji: string;
+  date: string;
+}
+
+export interface Skill {
+  id: string;
+  title: string;
+  percentage: number;
+  description: string;
+  iconSvg: string;
+}
+
+export interface Experience {
+  id: string;
+  startDate: string;
+  endDate: string;
+  title: string;
+  description: string;
+}
+
+export interface Author {
+  name: string;
+  role: string;
+  bioParagraph1: string;
+  bioParagraph2: string;
+  quote?: string;
+  page2Paragraph1?: string;
+  page2Quote?: string;
+  page2Paragraph2?: string;
+}
+
+export interface BookfolioData {
+  projects: Project[];
+  certificates: Certificate[];
+  guestbook: GuestbookEntry[];
+  skills?: Skill[];
+  experiences?: Experience[];
+  author?: Author;
+}
+
 interface BookfolioContextType {
   currentSheetIndex: number;
   totalSheets: number;
@@ -12,14 +74,18 @@ interface BookfolioContextType {
   prevPage: () => void;
   goToSheet: (index: number) => void;
   playPageFlipAudio: () => void;
+  data: BookfolioData;
+  selectedProjectId: string | null;
+  setSelectedProject: (id: string) => void;
 }
 
 const BookfolioContext = createContext<BookfolioContextType | undefined>(undefined);
 
-export function BookfolioProvider({ children, totalSheets }: { children: ReactNode, totalSheets: number }) {
+export function BookfolioProvider({ children, totalSheets, initialData }: { children: ReactNode, totalSheets: number, initialData: BookfolioData }) {
   const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [selectedProjectId, setSelectedProject] = useState<string | null>(null);
   const { playPageFlipAudio } = usePageFlipAudio(soundEnabled);
 
   const toggleSound = useCallback(() => {
@@ -93,7 +159,8 @@ export function BookfolioProvider({ children, totalSheets }: { children: ReactNo
   return (
     <BookfolioContext.Provider value={{
       currentSheetIndex, totalSheets, soundEnabled, isTransitioning,
-      toggleSound, nextPage, prevPage, goToSheet, playPageFlipAudio
+      toggleSound, nextPage, prevPage, goToSheet, playPageFlipAudio, data: initialData,
+      selectedProjectId, setSelectedProject
     }}>
       {children}
     </BookfolioContext.Provider>

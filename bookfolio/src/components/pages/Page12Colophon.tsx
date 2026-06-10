@@ -1,6 +1,11 @@
+"use client";
+import { useBookfolio } from '../../context/BookfolioContext';
+
 export default function Page12Colophon() {
+  const { data } = useBookfolio();
+
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center h-full text-center px-4 relative">
       <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER VII : LETTERS TO THE HORIZON</span>
       <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">A Written Journey</h3>
       <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>

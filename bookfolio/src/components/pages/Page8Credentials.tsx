@@ -1,8 +1,13 @@
+"use client";
+import { useBookfolio } from '../../context/BookfolioContext';
+
 export default function Page8Credentials() {
+  const { data } = useBookfolio();
+
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center h-full text-center relative">
       <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER V : SEALS OF VALIDATION</span>
-      <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Cryptographic Audits</h3>
+      <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Academic Proving Grounds</h3>
       <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
 
       <div id="cert-detail-box" className="p-4 bg-black/5 border border-[#4E4B46]/20 rounded-xl text-sm leading-relaxed text-[#1A2340]/80 font-body">

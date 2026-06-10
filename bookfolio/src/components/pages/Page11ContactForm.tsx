@@ -1,7 +1,9 @@
 "use client";
 import { useState } from 'react';
+import { useBookfolio } from '../../context/BookfolioContext';
 
 export default function Page11ContactForm() {
+  const { data } = useBookfolio();
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -11,7 +13,7 @@ export default function Page11ContactForm() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER VII : LETTERS TO THE HORIZON</span>
       <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Dispatch an Envoy</h3>
       <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>

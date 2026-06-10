@@ -1,7 +1,9 @@
 "use client";
-import { certificatesData } from '../../data/mockData';
+import { useBookfolio } from '../../context/BookfolioContext';
 
 export default function Page7Projects2() {
+  const { data } = useBookfolio();
+
   return (
     <div>
       <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER V : SEALS OF VALIDATION</span>
@@ -9,7 +11,7 @@ export default function Page7Projects2() {
       <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
 
       <div className="h-[340px] overflow-y-auto page-scroll space-y-3 pr-1">
-        {certificatesData.map(cert => (
+        {data.certificates.map(cert => (
           <div key={cert.id} className="p-3 bg-white/50 rounded-xl border border-[#4E4B46]/15 hover:border-[var(--paper-primary)]/40 hover:bg-white/80 transition-all cursor-pointer group shadow-sm">
             <div className="flex items-start gap-3">
               <div className="mt-0.5 p-1.5 bg-[#1A2340]/5 rounded border border-[#1A2340]/10 text-[var(--paper-primary)]">

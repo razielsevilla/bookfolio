@@ -1,4 +1,10 @@
+"use client";
+import { useBookfolio } from '../../context/BookfolioContext';
+
 export default function Page1Bio() {
+  const { data } = useBookfolio();
+  const author = data.author;
+
   return (
     <div>
       <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER I : THE SCRIBE'S AWAKENING</span>
@@ -12,22 +18,23 @@ export default function Page1Bio() {
           </svg>
         </div>
         <div>
-          <h4 className="font-bold text-sm text-[#1A2340] font-body">Raziel Sevilla</h4>
-          <p className="text-xs text-[var(--paper-primary)] font-body">Full-Stack Developer</p>
+          <h4 className="font-bold text-sm text-[#1A2340] font-body">{author?.name}</h4>
+          <p className="text-xs text-[var(--paper-primary)] font-body">{author?.role}</p>
         </div>
       </div>
 
       <p className="text-sm leading-relaxed mb-4 text-justify font-body text-[#1A2340]/90">
-        I build for the web, tinker with Machine Learning, and ship things that work. From AI-enhanced
-        blockchain frameworks to gamified task management, I turn complex problems into functional,
-        high-impact code.
+        {author?.bioParagraph1}
       </p>
-      <p className="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90">
-        Before being a developer, before being an engineer, I am a reader first. I am someone who reads —
-        books, codebases, documentation, people. This portfolio is shaped in the image of that identity. What
-        you navigate here is not a list of accomplishments. It is a story in progress — each chapter a
-        different facet of how I think and what I build.
+      <p className="text-sm leading-relaxed mb-4 text-justify font-body text-[#1A2340]/90">
+        {author?.bioParagraph2}
       </p>
+      
+      {author?.quote && (
+        <div className="mt-6 border-l-2 border-[var(--paper-primary)] pl-4 italic text-[#1A2340]/70 font-body text-xs">
+          "{author.quote}"
+        </div>
+      )}
     </div>
   );
 }

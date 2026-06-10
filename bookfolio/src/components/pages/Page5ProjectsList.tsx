@@ -1,16 +1,15 @@
 "use client";
 import { useState } from 'react';
-import { portfolioItems } from '../../data/mockData';
 import { useBookfolio } from '../../context/BookfolioContext';
 
 export default function Page5ProjectsList() {
   const [filter, setFilter] = useState('all');
-  const { goToSheet } = useBookfolio();
+  const { goToSheet, data, setSelectedProject } = useBookfolio();
 
-  const filteredItems = portfolioItems.filter(item => filter === 'all' || item.category === filter);
+  const filteredItems = data.projects.filter(item => filter === 'all' || item.category === filter);
 
   const viewProject = (id: string) => {
-    // Currently hardcoded to navigate to Sheet 4 (index 3) to view details
+    setSelectedProject(id);
     goToSheet(3);
   };
 
