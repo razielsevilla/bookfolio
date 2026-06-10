@@ -32,6 +32,7 @@ export default defineType({
       name: 'description',
       title: 'Interactive Highlight Description',
       type: 'text',
+      validation: (Rule) => Rule.max(160).warning('Keep descriptions under 160 characters for consistent card heights.'),
     }),
   ],
 })

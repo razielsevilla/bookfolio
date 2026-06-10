@@ -39,7 +39,7 @@ export default function Page({ side, isCover, pageNumber, children }: PageProps)
         </>
       ) : (
         <>
-          <div>
+          <div className="flex-1 flex flex-col min-h-0 w-full pb-4">
             {children}
           </div>
           <div className={`flex shrink-0 ${side === 'front' ? 'justify-end' : 'justify-start'} items-center text-xs text-[var(--paper-primary)]/70 mt-auto pt-4 border-t border-[#4E4B46]/20 font-mono`}>

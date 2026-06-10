@@ -6,12 +6,15 @@ export default function Page2Timeline() {
   const author = data.author;
 
   return (
-    <div>
-      <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER I : THE SCRIBE'S AWAKENING</span>
-      <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Our Narrative Path</h3>
-      <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
+    <div className="flex flex-col h-full">
+      <div className="shrink-0">
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER I : THE SCRIBE'S AWAKENING</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Our Narrative Path</h3>
+        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
+      </div>
 
-      <p className="text-sm leading-relaxed mb-4 text-justify font-body text-[#1A2340]/90">
+      <div className="flex-1 overflow-y-auto page-scroll pr-2">
+        <p className="text-sm leading-relaxed mb-4 text-justify font-body text-[#1A2340]/90">
         {author?.page2Paragraph1}
       </p>
 
@@ -24,6 +27,7 @@ export default function Page2Timeline() {
       <p className="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90">
         {author?.page2Paragraph2}
       </p>
+      </div>
     </div>
   );
 }

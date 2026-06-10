@@ -30,10 +30,11 @@ export interface GuestbookEntry {
 
 export interface Skill {
   id: string;
-  title: string;
+  name: string;
+  category?: string;
   percentage: number;
   description: string;
-  iconSvg: string;
+  iconSvg?: string;
 }
 
 export interface Experience {

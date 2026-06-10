@@ -14,18 +14,20 @@ export default function Page5ProjectsList() {
   };
 
   return (
-    <div>
-      <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER IV : RELICS OF CREATION</span>
-      <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Great Forge</h3>
-      <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-3"></div>
+    <div className="flex flex-col h-full">
+      <div className="shrink-0">
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER IV : RELICS OF CREATION</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Great Forge</h3>
+        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-3"></div>
 
-      <div className="flex items-center space-x-2 mb-3 text-xs font-body">
+        <div className="flex items-center space-x-2 mb-3 text-xs font-body">
         <button type="button" onClick={() => setFilter('all')} className={`px-2.5 py-1 rounded-md font-medium transition-all ${filter === 'all' ? 'bg-[#1A2340] text-[#F4EAD5]' : 'bg-black/5 hover:bg-black/10 border border-[#4E4B46]/20 text-[#1A2340]'}`}>All</button>
         <button type="button" onClick={() => setFilter('dev')} className={`px-2.5 py-1 rounded-md font-medium transition-all ${filter === 'dev' ? 'bg-[#1A2340] text-[#F4EAD5]' : 'bg-black/5 hover:bg-black/10 border border-[#4E4B46]/20 text-[#1A2340]'}`}>Develop</button>
         <button type="button" onClick={() => setFilter('design')} className={`px-2.5 py-1 rounded-md font-medium transition-all ${filter === 'design' ? 'bg-[#1A2340] text-[#F4EAD5]' : 'bg-black/5 hover:bg-black/10 border border-[#4E4B46]/20 text-[#1A2340]'}`}>Design</button>
+        </div>
       </div>
 
-      <div className="h-[310px] overflow-y-auto page-scroll pr-1">
+      <div className="flex-1 overflow-y-auto page-scroll pr-1 pb-2">
         <div className="grid grid-cols-2 gap-3">
           {filteredItems.map(item => (
             <div 
