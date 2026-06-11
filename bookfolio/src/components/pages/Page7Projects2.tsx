@@ -3,14 +3,17 @@ import { useState } from 'react';
 import { useBookfolio } from '../../context/BookfolioContext';
 
 export default function Page7Projects2() {
-  const { data, selectedCertificateId, setSelectedCertificate } = useBookfolio();
+  const { data, selectedCertificateId, setSelectedCertificate, goToMobilePage } = useBookfolio();
   const [expandedCertId, setExpandedCertId] = useState<string | null>(null);
 
   const handleToggle = (id: string) => {
     // Update the image on the other page
     setSelectedCertificate(id);
     
-    // Toggle the expansion on this page
+    // Mobile: automatically flip to the certificate details page (Index 8 is Page 8)
+    goToMobilePage(8);
+    
+    // Desktop: Toggle the expansion on this page
     if (expandedCertId === id) {
       setExpandedCertId(null);
     } else {

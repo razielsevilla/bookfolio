@@ -3,11 +3,12 @@ import { useState } from 'react';
 import { useBookfolio } from '../../context/BookfolioContext';
 
 export default function Page5ProjectsList() {
-  const { goToSheet, data, setSelectedProject, selectedProjectId } = useBookfolio();
+  const { goToSheet, goToMobilePage, data, setSelectedProject, selectedProjectId } = useBookfolio();
 
   const viewProject = (id: string) => {
     setSelectedProject(id);
-    goToSheet(3);
+    goToSheet(3); // Desktop 3D book navigation
+    goToMobilePage(6); // Mobile 2D flip navigation (Index 6 is Page 6: Project Details)
   };
 
   return (

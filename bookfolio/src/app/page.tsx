@@ -2,6 +2,7 @@ import { BookfolioProvider } from '../context/BookfolioContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Book from '../components/Book';
+import MobileBook from '../components/MobileBook';
 import { client } from '../sanity/client';
 
 export const revalidate = 60; // Revalidate every 60 seconds
@@ -27,7 +28,12 @@ export default async function Home() {
   return (
     <BookfolioProvider totalSheets={7} initialData={initialData}>
       <Header />
-      <Book />
+      <div className="hidden lg:flex flex-grow items-center justify-center relative p-4 overflow-hidden z-10">
+        <Book />
+      </div>
+      <div className="lg:hidden flex-grow overflow-hidden px-2 py-4 relative z-10">
+        <MobileBook />
+      </div>
       <Footer />
     </BookfolioProvider>
   );

@@ -17,7 +17,7 @@ export default function Footer() {
   const { currentSheetIndex, totalSheets, prevPage, nextPage } = useBookfolio();
 
   return (
-    <footer className="theme-header-footer w-full px-6 py-4 border-t backdrop-blur-md flex items-center justify-center z-30">
+    <footer className="theme-header-footer w-full px-6 py-4 border-t backdrop-blur-md hidden lg:flex items-center justify-center z-30">
       <div className="flex items-center space-x-6">
         <button onClick={prevPage} className="p-3 bg-[#1A2340]/40 hover:bg-[#1A2340]/80 border border-[#4E4B46] rounded-full transition-all flex items-center justify-center shadow-lg group hover:-translate-x-1" aria-label="Previous Page">
           <svg className="w-5 h-5 text-[#F4EAD5] group-hover:text-[#D4A574]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

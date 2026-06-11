@@ -75,6 +75,9 @@ interface BookfolioContextType {
   nextPage: () => void;
   prevPage: () => void;
   goToSheet: (index: number) => void;
+  mobilePageIndex: number;
+  setMobilePageIndex: React.Dispatch<React.SetStateAction<number>>;
+  goToMobilePage: (index: number) => void;
   playPageFlipAudio: () => void;
   data: BookfolioData;
   selectedProjectId: string | null;
@@ -88,6 +91,7 @@ const BookfolioContext = createContext<BookfolioContextType | undefined>(undefin
 
 export function BookfolioProvider({ children, totalSheets, initialData }: { children: ReactNode, totalSheets: number, initialData: BookfolioData }) {
   const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
+  const [mobilePageIndex, setMobilePageIndex] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [data, setData] = useState<BookfolioData>(initialData);
@@ -103,14 +107,7 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
   }, []);
 
   const toggleSound = useCallback(() => {
-    setSoundEnabled(prev => {
-      const next = !prev;
-      if (next) {
-        // usePageFlipAudio captures the latest state but we can't play it directly here if we rely on hook 
-        // We'll just set it. The user has to flip a page to hear it again.
-      }
-      return next;
-    });
+    setSoundEnabled(prev => !prev);
   }, []);
 
   const nextPage = useCallback(() => {
@@ -143,7 +140,6 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
     const steps = Math.abs(targetIndex - currentSheetIndex);
     const direction = targetIndex > currentSheetIndex ? 1 : -1;
 
-    // We handle the immediate first step
     setCurrentSheetIndex(currentSheetIndex + direction);
     playPageFlipAudio();
     
@@ -165,10 +161,17 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
     }
   }, [isTransitioning, currentSheetIndex, playPageFlipAudio]);
 
+  const goToMobilePage = useCallback((targetIndex: number) => {
+    setMobilePageIndex(targetIndex);
+    playPageFlipAudio();
+  }, [playPageFlipAudio]);
+
   return (
     <BookfolioContext.Provider value={{
       currentSheetIndex, totalSheets, soundEnabled, isTransitioning,
-      toggleSound, nextPage, prevPage, goToSheet, playPageFlipAudio, data,
+      toggleSound, nextPage, prevPage, goToSheet, 
+      mobilePageIndex, setMobilePageIndex, goToMobilePage,
+      playPageFlipAudio, data,
       selectedProjectId, setSelectedProject,
       selectedCertificateId, setSelectedCertificate,
       addGuestbookEntry

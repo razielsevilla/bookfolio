@@ -31,7 +31,7 @@ export default function Book() {
   }
 
   return (
-    <main className="flex-grow flex items-center justify-center relative p-4 overflow-hidden z-10">
+    <>
       <div id="book-scaler" className="transition-transform duration-300 ease-out flex items-center justify-center">
         <div className="scene">
           <div className="book" style={{ transform }}>
@@ -131,6 +131,6 @@ export default function Book() {
           </div>
         </div>
       </div>
-    </main>
+    </>
   );
 }
