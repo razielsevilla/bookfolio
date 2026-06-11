@@ -80,6 +80,7 @@ interface BookfolioContextType {
   setSelectedProject: (id: string) => void;
   selectedCertificateId: string | null;
   setSelectedCertificate: (id: string) => void;
+  addGuestbookEntry: (entry: GuestbookEntry) => void;
 }
 
 const BookfolioContext = createContext<BookfolioContextType | undefined>(undefined);
@@ -88,9 +89,17 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
   const [currentSheetIndex, setCurrentSheetIndex] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [data, setData] = useState<BookfolioData>(initialData);
   const [selectedProjectId, setSelectedProject] = useState<string | null>(null);
   const [selectedCertificateId, setSelectedCertificate] = useState<string | null>(null);
   const { playPageFlipAudio } = usePageFlipAudio(soundEnabled);
+
+  const addGuestbookEntry = useCallback((entry: GuestbookEntry) => {
+    setData(prev => ({
+      ...prev,
+      guestbook: [entry, ...prev.guestbook]
+    }));
+  }, []);
 
   const toggleSound = useCallback(() => {
     setSoundEnabled(prev => {
@@ -158,9 +167,10 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
   return (
     <BookfolioContext.Provider value={{
       currentSheetIndex, totalSheets, soundEnabled, isTransitioning,
-      toggleSound, nextPage, prevPage, goToSheet, playPageFlipAudio, data: initialData,
+      toggleSound, nextPage, prevPage, goToSheet, playPageFlipAudio, data,
       selectedProjectId, setSelectedProject,
-      selectedCertificateId, setSelectedCertificate
+      selectedCertificateId, setSelectedCertificate,
+      addGuestbookEntry
     }}>
       {children}
     </BookfolioContext.Provider>
