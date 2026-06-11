@@ -8,7 +8,7 @@ export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function Home() {
   // Fetch data from Sanity
-  const sanityProjects = await client.fetch(`*[_type == "project"]`);
+  const sanityProjects = await client.fetch(`*[_type == "project"] | order(orderRank asc, _createdAt asc)`);
   const sanityCertificates = await client.fetch(`*[_type == "certificate"]`);
   const sanityGuestbook = await client.fetch(`*[_type == "guestbook"] | order(_createdAt desc)`);
   const sanitySkills = await client.fetch(`*[_type == "skill"]`);

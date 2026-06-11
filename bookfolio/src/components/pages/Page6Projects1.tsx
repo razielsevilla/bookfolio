@@ -17,29 +17,54 @@ export default function Page6Projects1() {
     <div>
       <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body" id="showcase-category">RELIQUARY VIEW</span>
       <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]" id="showcase-title">{activeProject.title}</h3>
-      <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
+      {activeProject.subtitle && (
+        <p className="text-[10px] text-[var(--paper-primary)] font-mono mt-0.5 uppercase tracking-wider font-bold">{activeProject.subtitle}</p>
+      )}
+      <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-2 mb-4"></div>
 
-      <div className={`relative w-full h-32 rounded-xl bg-gradient-to-br ${activeProject.color || 'from-[#243054] to-[#1A2340]'} border border-[#4E4B46]/35 p-0.5 overflow-hidden mb-4 shadow-md group`}>
-        <div 
-          className="absolute inset-0 bg-black/20 flex items-center justify-center text-[#E8C77A]" 
-          id="showcase-graphic"
-          dangerouslySetInnerHTML={{ __html: activeProject.graphic || '' }}
-        />
-      </div>
+
 
       <p className="text-sm leading-relaxed text-[#1A2340]/90 text-justify mb-4 font-body" id="showcase-desc">
         {activeProject.desc}
       </p>
 
-      <div className="p-3 bg-black/5 rounded-xl border border-[#4E4B46]/20 grid grid-cols-2 gap-2 text-xs font-mono">
-        <div>
-          <span className="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Client:</span>
-          <span className="text-[#1A2340] font-bold font-body" id="showcase-client">{activeProject.client}</span>
+      <div className="p-3 bg-black/5 rounded-xl border border-[#4E4B46]/20 flex flex-col gap-2 text-xs font-mono">
+        <div className="grid grid-cols-1 gap-2">
+          <div>
+            <span className="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Tech Stack:</span>
+            <span className="text-[#1A2340] font-bold font-body" id="showcase-tech">{activeProject.tech}</span>
+          </div>
         </div>
-        <div>
-          <span className="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Tech Stack:</span>
-          <span className="text-[#1A2340] font-bold font-body" id="showcase-tech">{activeProject.tech}</span>
-        </div>
+
+        {(activeProject.repoUrl || activeProject.liveUrl || activeProject.landingUrl) && (
+          <div className="grid grid-flow-col auto-cols-fr gap-2 pt-2 border-t border-[#4E4B46]/10">
+            {activeProject.repoUrl && (
+              <div>
+                <span className="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Repository:</span>
+                <a href={activeProject.repoUrl} target="_blank" rel="noopener noreferrer" className="text-[#1A2340] font-bold font-body hover:underline truncate block">Source Code</a>
+              </div>
+            )}
+            {activeProject.liveUrl && (
+              <div>
+                <span className="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Live App:</span>
+                <a href={activeProject.liveUrl} target="_blank" rel="noopener noreferrer" className="text-[#1A2340] font-bold font-body hover:underline truncate block">View Site</a>
+              </div>
+            )}
+            {activeProject.landingUrl && (
+              <div>
+                <span className="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Landing Page:</span>
+                <a href={activeProject.landingUrl} target="_blank" rel="noopener noreferrer" className="text-[#1A2340] font-bold font-body hover:underline truncate block">Visit Page</a>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeProject.collaborators && (
+          <div className="pt-2 border-t border-[#4E4B46]/10">
+            <span className="text-[var(--paper-primary)] block uppercase text-[9px] tracking-wider font-bold">Collaborators:</span>
+            <span className="text-[#1A2340] font-bold font-body">{activeProject.collaborators}</span>
+          </div>
+        )}
       </div>
     </div>
   );

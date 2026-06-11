@@ -12,31 +12,28 @@ export default defineType({
       description: 'A unique id string, e.g. "kumpirma"',
     }),
     defineField({
+      name: 'orderRank',
+      title: 'Sort Order',
+      type: 'number',
+      description: 'Lower numbers show up first (1, 2, 3). Unset items go to the end.',
+    }),
+    defineField({
       name: 'title',
-      title: 'Title',
+      title: 'Project Name',
       type: 'string',
     }),
     defineField({
-      name: 'category',
-      title: 'Category',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Develop', value: 'dev' },
-          { title: 'Design', value: 'design' },
-        ],
-      },
-    }),
-    defineField({
-      name: 'tag',
-      title: 'Tag / Subtitle',
+      name: 'subtitle',
+      title: 'Subtitle',
       type: 'string',
       description: 'e.g. "Blockchain / AI"',
+      validation: Rule => Rule.max(80).error('Subtitle must be 80 characters or less to fit on the page.'),
     }),
     defineField({
-      name: 'client',
-      title: 'Client',
-      type: 'string',
+      name: 'desc',
+      title: 'Description',
+      type: 'text',
+      validation: Rule => Rule.max(450).error('Description must be 450 characters or less to fit on one page without scrolling.'),
     }),
     defineField({
       name: 'tech',
@@ -45,21 +42,25 @@ export default defineType({
       description: 'e.g. "TensorFlow.js / Blockchain / Laravel"',
     }),
     defineField({
-      name: 'desc',
-      title: 'Description',
-      type: 'text',
-    }),
-    defineField({
-      name: 'color',
-      title: 'Gradient Color Classes',
+      name: 'collaborators',
+      title: 'Collaborator',
       type: 'string',
-      description: 'e.g. "from-[#243054] to-[#1A2340]"',
+      description: 'If any, e.g. "John Doe, Jane Smith"',
     }),
     defineField({
-      name: 'graphic',
-      title: 'SVG Graphic Code',
-      type: 'text',
-      description: 'Paste the <svg> element code here',
+      name: 'repoUrl',
+      title: 'GitHub Repo',
+      type: 'url',
+    }),
+    defineField({
+      name: 'liveUrl',
+      title: 'Live App',
+      type: 'url',
+    }),
+    defineField({
+      name: 'landingUrl',
+      title: 'Landing Page',
+      type: 'url',
     }),
   ],
 })

@@ -5,13 +5,13 @@ import { usePageFlipAudio } from '../hooks/usePageFlipAudio';
 export interface Project {
   id: string;
   title: string;
-  category: string;
-  tag: string;
-  client: string;
-  tech: string;
+  subtitle?: string;
   desc: string;
-  color: string;
-  graphic: string;
+  tech: string;
+  collaborators?: string;
+  repoUrl?: string;
+  liveUrl?: string;
+  landingUrl?: string;
 }
 
 export interface Certificate {
