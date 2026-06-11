@@ -31,6 +31,7 @@ export interface GuestbookEntry {
 
 export interface Skill {
   id: string;
+  _id?: string;
   name: string;
   category?: string;
   percentage: number;
