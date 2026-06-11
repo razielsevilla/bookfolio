@@ -59,20 +59,15 @@ export default function Page11ContactForm() {
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-3 font-body">
           <div>
             <label className="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Email Address</label>
-            <input name="email" required type="email" className="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)]" />
+            <input name="email" required type="email" placeholder="you@example.com" className="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)]" />
           </div>
           <div>
-            <label className="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Nature of Inquiry</label>
-            <select name="inquiry" className="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)]">
-              <option>System Architecture</option>
-              <option>3D Interface Commission</option>
-              <option>Speaking &amp; Lectures</option>
-              <option>Direct Contact</option>
-            </select>
+            <label className="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Email Subject</label>
+            <input name="inquiry" required type="text" placeholder="What is this regarding?" className="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)]" />
           </div>
           <div className="flex-1 flex flex-col">
-            <label className="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Project Details</label>
-            <textarea name="details" required className="w-full flex-1 bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] resize-none min-h-[80px]"></textarea>
+            <label className="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Email Body</label>
+            <textarea name="details" required placeholder="Write your message here..." className="w-full flex-1 bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] resize-none min-h-[80px]"></textarea>
           </div>
           <button disabled={loading} type="submit" className="w-full bg-[#1A2340] text-[#F4EAD5] font-bold text-xs py-3 rounded-lg hover:bg-[#243054] transition-all flex items-center justify-center gap-1.5 shadow-md disabled:opacity-50">
             {loading ? 'Transmitting...' : (
