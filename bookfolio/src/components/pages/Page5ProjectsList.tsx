@@ -15,7 +15,7 @@ export default function Page5ProjectsList() {
       <div className="shrink-0">
         <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER IV : RELICS OF CREATION</span>
         <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Great Forge</h3>
-        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-3"></div>
+        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
       </div>
 
       <div className="flex-1 overflow-y-auto page-scroll pr-1 pb-2">

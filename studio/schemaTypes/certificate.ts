@@ -25,5 +25,13 @@ export default defineType({
       title: 'Tag / Topics',
       type: 'string',
     }),
+    defineField({
+      name: 'image',
+      title: 'Certificate Image',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    }),
   ],
 })

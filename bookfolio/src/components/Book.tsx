@@ -85,7 +85,7 @@ export default function Book() {
                 <Page6Projects1 />
               </Page>
               <Page side="back" pageNumber={7}>
-                <Page7Projects2 />
+                <Page8Credentials />
               </Page>
             </Sheet>
 
@@ -95,7 +95,7 @@ export default function Book() {
               tabs={[{ title: "V", tooltip: "V: Seals", top: 300, target: 4 }]}
             >
               <Page side="front" pageNumber={8}>
-                <Page8Credentials />
+                <Page7Projects2 />
               </Page>
               <Page side="back" pageNumber={9}>
                 <Page9Guestbook />

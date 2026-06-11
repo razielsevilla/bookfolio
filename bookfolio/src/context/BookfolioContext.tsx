@@ -19,6 +19,7 @@ export interface Certificate {
   title: string;
   issuer: string;
   tag: string;
+  image?: any;
 }
 
 export interface GuestbookEntry {
@@ -77,6 +78,8 @@ interface BookfolioContextType {
   data: BookfolioData;
   selectedProjectId: string | null;
   setSelectedProject: (id: string) => void;
+  selectedCertificateId: string | null;
+  setSelectedCertificate: (id: string) => void;
 }
 
 const BookfolioContext = createContext<BookfolioContextType | undefined>(undefined);
@@ -86,6 +89,7 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [selectedProjectId, setSelectedProject] = useState<string | null>(null);
+  const [selectedCertificateId, setSelectedCertificate] = useState<string | null>(null);
   const { playPageFlipAudio } = usePageFlipAudio(soundEnabled);
 
   const toggleSound = useCallback(() => {
@@ -155,7 +159,8 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
     <BookfolioContext.Provider value={{
       currentSheetIndex, totalSheets, soundEnabled, isTransitioning,
       toggleSound, nextPage, prevPage, goToSheet, playPageFlipAudio, data: initialData,
-      selectedProjectId, setSelectedProject
+      selectedProjectId, setSelectedProject,
+      selectedCertificateId, setSelectedCertificate
     }}>
       {children}
     </BookfolioContext.Provider>
