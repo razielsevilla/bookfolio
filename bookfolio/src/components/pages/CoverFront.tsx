@@ -1,4 +1,11 @@
+"use client";
+import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
+
 export default function CoverFront() {
+  const { data } = useBookfolio();
+  const covers = data.siteContent?.covers ?? DEFAULT_SITE_CONTENT.covers;
+
   return (
     <>
       <div className="absolute -inset-8 bg-[radial-gradient(circle_at_center,_rgba(212,165,116,0.08)_0%,_transparent_70%)] pointer-events-none"></div>
@@ -9,7 +16,7 @@ export default function CoverFront() {
       <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[#D4A574]/30 pointer-events-none"></div>
 
       <div className="z-10 relative mt-2 text-center">
-        <p className="text-xs tracking-[0.25em] font-medium text-[#D4A574] font-body">PORTFOLIO CODEX 2026</p>
+        <p className="text-xs tracking-[0.25em] font-medium text-[#D4A574] font-body">{covers.frontEyebrow}</p>
         <div className="w-12 h-px bg-[#D4A574]/40 mx-auto mt-2"></div>
       </div>
 
@@ -25,17 +32,17 @@ export default function CoverFront() {
         </div>
         
         <h2 className="text-4xl md:text-5xl font-extrabold tracking-[0.2em] font-headline leading-tight text-[#E8C77A] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">BOOKFOLIO</h2>
-        <p className="text-[10px] tracking-widest mt-4 text-[#D4A574] font-body opacity-90 drop-shadow-md">A MULTI-DIMENSIONAL WEB SHOWCASE</p>
-        
+        <p className="text-[10px] tracking-widest mt-4 text-[#D4A574] font-body opacity-90 drop-shadow-md">{covers.frontTagline}</p>
+
         <div className="flex items-center justify-center gap-3 mt-8">
             <div className="w-10 h-[1px] bg-[#D4A574]/30"></div>
-            <p className="text-[10px] tracking-[0.3em] text-[#E8C77A]/70 font-mono">RAZIEL SEVILLA</p>
+            <p className="text-[10px] tracking-[0.3em] text-[#E8C77A]/70 font-mono">{covers.frontName}</p>
             <div className="w-10 h-[1px] bg-[#D4A574]/30"></div>
         </div>
       </div>
 
       <div className="text-[10px] text-center tracking-[0.2em] font-headline text-[#E8C77A] hover:text-white transition-all animate-pulse z-10 relative mb-2">
-        CLICK TO UNVEIL &rarr;
+        {covers.frontCue}
       </div>
     </>
   );

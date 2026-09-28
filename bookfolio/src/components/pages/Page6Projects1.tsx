@@ -1,11 +1,13 @@
 "use client";
 import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 export default function Page6Projects1() {
   const { data, selectedProjectId } = useBookfolio();
-  
+  const chapter = data.siteContent?.chapters?.page6 ?? DEFAULT_SITE_CONTENT.chapters.page6;
+
   // Default to first project if none selected
-  const activeProject = selectedProjectId 
+  const activeProject = selectedProjectId
     ? data.projects.find(p => p.id === selectedProjectId) || data.projects[0]
     : data.projects[0];
 
@@ -16,8 +18,8 @@ export default function Page6Projects1() {
   return (
     <div className="flex flex-col h-full">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body" id="showcase-category">CHAPTER IV : RELICS OF CREATION</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Great Forge</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body" id="showcase-category">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
       </div>
 

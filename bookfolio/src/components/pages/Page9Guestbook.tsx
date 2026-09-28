@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 const EMBLEMS: Record<string, React.ReactNode> = {
   '✍️': <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>,
@@ -12,6 +13,7 @@ const EMBLEMS: Record<string, React.ReactNode> = {
 
 export default function Page9Guestbook() {
   const { data, addGuestbookEntry, nextPage } = useBookfolio();
+  const chapter = data.siteContent?.chapters?.page9 ?? DEFAULT_SITE_CONTENT.chapters.page9;
   const [selectedEmoji, setSelectedEmoji] = useState('✍️');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,10 +26,12 @@ export default function Page9Guestbook() {
     const form = e.target as HTMLFormElement;
     const nameInput = form.elements.namedItem('name') as HTMLInputElement;
     const messageInput = form.elements.namedItem('message') as HTMLTextAreaElement;
+    const honeypotInput = form.elements.namedItem('website') as HTMLInputElement;
 
     const name = nameInput.value;
     const message = messageInput.value;
-    
+    const website = honeypotInput.value;
+
     if (!name.trim() || !message.trim()) return;
 
     setIsSubmitting(true);
@@ -38,7 +42,7 @@ export default function Page9Guestbook() {
       const response = await fetch('/api/guestbook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, message, emoji: selectedEmoji }),
+        body: JSON.stringify({ name, message, emoji: selectedEmoji, website }),
       });
 
       const result = await response.json();
@@ -77,8 +81,8 @@ export default function Page9Guestbook() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER VI : ECHOES FROM THE LEDGER</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Inscribe Your Tale</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-3"></div>
       </div>
 
@@ -96,6 +100,14 @@ export default function Page9Guestbook() {
         )}
 
         <form onSubmit={handleSubmit} className={`flex-1 flex flex-col space-y-3 font-body transition-opacity duration-300 ${isSubmitting ? 'opacity-50 pointer-events-none' : ''}`}>
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            className="hidden"
+            aria-hidden="true"
+          />
           <div>
             <label className="text-[9px] uppercase tracking-widest text-[var(--paper-primary)] font-bold block mb-1">Your Name</label>
             <input required name="name" type="text" placeholder="Type your name..." className="w-full bg-black/5 border border-[#4E4B46]/20 rounded-lg p-2.5 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] placeholder-[#1A2340]/40" />

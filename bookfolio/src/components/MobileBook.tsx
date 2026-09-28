@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useBookfolio } from '../context/BookfolioContext';
+import { useBookKeyboardNav } from '../hooks/useBookKeyboardNav';
 import CoverFront from './pages/CoverFront';
 import CoverBack from './pages/CoverBack';
 import Page1Bio from './pages/Page1Bio';
@@ -57,19 +58,7 @@ export default function MobileBook() {
   }, [playPageFlipAudio, setMobilePageIndex]);
 
   // Keyboard and Volume buttons support
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'AudioVolumeDown') {
-        if (e.key === 'AudioVolumeDown') e.preventDefault(); // Attempt to block default volume UI
-        nextPage();
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'AudioVolumeUp') {
-        if (e.key === 'AudioVolumeUp') e.preventDefault();
-        prevPage();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown, { passive: false });
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nextPage, prevPage]);
+  useBookKeyboardNav(nextPage, prevPage);
 
   // Touch Swipe support
   const touchStartX = useRef(0);

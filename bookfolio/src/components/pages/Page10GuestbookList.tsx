@@ -1,5 +1,6 @@
 "use client";
 import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 const EMBLEMS: Record<string, React.ReactNode> = {
   '✍️': <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>,
@@ -11,12 +12,13 @@ const EMBLEMS: Record<string, React.ReactNode> = {
 
 export default function Page10GuestbookList() {
   const { data } = useBookfolio();
+  const chapter = data.siteContent?.chapters?.page10 ?? DEFAULT_SITE_CONTENT.chapters.page10;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER VI : ECHOES FROM THE LEDGER</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Scroll of Greetings</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
       </div>
 

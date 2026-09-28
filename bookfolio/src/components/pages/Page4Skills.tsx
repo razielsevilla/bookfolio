@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 export default function Page4Skills() {
   const { data } = useBookfolio();
@@ -8,12 +9,13 @@ export default function Page4Skills() {
   const [activeSkillId, setActiveSkillId] = useState<string | null>(null);
 
   const activeSkill = skills.find(s => (s.id || s._id) === activeSkillId);
+  const chapter = data.siteContent?.chapters?.page4 ?? DEFAULT_SITE_CONTENT.chapters.page4;
 
   return (
     <div className="flex flex-col h-full">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER III : THE ARCANUM OF CRAFTS</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Guild of Instruments</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
 
         <div className="p-3 bg-black/5 border border-[#4E4B46]/20 rounded-xl text-xs leading-relaxed text-[#1A2340]/80 font-body mb-4 h-[84px] flex items-center overflow-hidden">

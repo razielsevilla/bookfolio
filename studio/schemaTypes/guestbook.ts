@@ -9,11 +9,13 @@ export default defineType({
       name: 'name',
       title: 'Visitor Name',
       type: 'string',
+      validation: Rule => Rule.max(60).warning('Keep names under 60 characters.'),
     }),
     defineField({
       name: 'message',
       title: 'Message',
       type: 'text',
+      validation: Rule => Rule.max(500).warning('Keep messages under 500 characters.'),
     }),
     defineField({
       name: 'emoji',

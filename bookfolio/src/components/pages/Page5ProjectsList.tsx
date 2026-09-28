@@ -1,9 +1,11 @@
 "use client";
 import { useState } from 'react';
 import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 export default function Page5ProjectsList() {
   const { goToSheet, goToMobilePage, data, setSelectedProject, selectedProjectId } = useBookfolio();
+  const chapter = data.siteContent?.chapters?.page5 ?? DEFAULT_SITE_CONTENT.chapters.page5;
 
   const viewProject = (id: string) => {
     setSelectedProject(id);
@@ -14,8 +16,8 @@ export default function Page5ProjectsList() {
   return (
     <div className="flex flex-col h-full">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER IV : RELICS OF CREATION</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">The Great Forge</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
       </div>
 

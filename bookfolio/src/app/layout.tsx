@@ -14,9 +14,29 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
+const title = "Bookfolio - 3D Page-Flip Web Portfolio";
+const description = "3D Interactive Portfolio Codex";
+
 export const metadata: Metadata = {
-  title: "Bookfolio - 3D Page-Flip Web Portfolio",
-  description: "3D Interactive Portfolio Codex",
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    type: "website",
+    url: siteUrl,
+    siteName: "Bookfolio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +46,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
-      <body className="h-screen w-screen overflow-hidden flex flex-col justify-between select-none relative font-body bg-[var(--bg-gradient)] text-[var(--text-color)]">
+      <body
+        className="h-screen w-screen overflow-hidden flex flex-col justify-between select-none relative font-body bg-[var(--bg-gradient)] text-[var(--text-color)]"
+        suppressHydrationWarning
+      >
         {/* Ambient Light Studio Workspace Overlay */}
         <div className="ambient-glow"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(0,0,0,0.2)_100%)] pointer-events-none z-0"></div>

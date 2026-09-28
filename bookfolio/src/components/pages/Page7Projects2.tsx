@@ -1,10 +1,12 @@
 "use client";
 import { useState } from 'react';
 import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 export default function Page7Projects2() {
   const { data, selectedCertificateId, setSelectedCertificate, goToMobilePage } = useBookfolio();
   const [expandedCertId, setExpandedCertId] = useState<string | null>(null);
+  const chapter = data.siteContent?.chapters?.page7 ?? DEFAULT_SITE_CONTENT.chapters.page7;
 
   const handleToggle = (id: string) => {
     // Update the image on the other page
@@ -24,8 +26,8 @@ export default function Page7Projects2() {
   return (
     <div className="flex flex-col h-full">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER V : SEALS OF VALIDATION</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Credentials Vault</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
       </div>
 

@@ -57,6 +57,58 @@ export interface Author {
   page2Paragraph2?: string;
 }
 
+export interface ChapterEntry {
+  chapterLabel: string;
+  title: string;
+}
+
+export interface SocialLink {
+  platform: 'github' | 'linkedin' | 'email' | 'website' | 'other';
+  url: string;
+  label?: string;
+}
+
+export interface SiteContentCovers {
+  frontEyebrow: string;
+  frontTagline: string;
+  frontName: string;
+  frontCue: string;
+  backHeading: string;
+  backDescription: string;
+  backCopyrightLine: string;
+}
+
+export interface SiteContentColophon {
+  introParagraph: string;
+  socials: SocialLink[];
+}
+
+export interface SiteContentContact {
+  recipientEmail: string;
+}
+
+export interface SiteContentChapters {
+  page1: ChapterEntry;
+  page2: ChapterEntry;
+  page3: ChapterEntry;
+  page4: ChapterEntry;
+  page5: ChapterEntry;
+  page6: ChapterEntry;
+  page7: ChapterEntry;
+  page8: ChapterEntry;
+  page9: ChapterEntry;
+  page10: ChapterEntry;
+  page11: ChapterEntry;
+  page12: ChapterEntry;
+}
+
+export interface SiteContent {
+  covers: SiteContentCovers;
+  colophon: SiteContentColophon;
+  contact: SiteContentContact;
+  chapters: SiteContentChapters;
+}
+
 export interface BookfolioData {
   projects: Project[];
   certificates: Certificate[];
@@ -64,6 +116,7 @@ export interface BookfolioData {
   skills?: Skill[];
   experiences?: Experience[];
   author?: Author;
+  siteContent?: SiteContent;
 }
 
 interface BookfolioContextType {

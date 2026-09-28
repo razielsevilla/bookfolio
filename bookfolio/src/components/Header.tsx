@@ -1,5 +1,7 @@
 "use client";
 import { useBookfolio } from '../context/BookfolioContext';
+import JumpToMenu from './JumpToMenu';
+import ResumePicker from './ResumePicker';
 
 export default function Header() {
   const { soundEnabled, toggleSound } = useBookfolio();
@@ -12,11 +14,15 @@ export default function Header() {
         </svg>
         <div>
           <h1 className="text-xl font-bold tracking-widest font-headline leading-none text-[#E8C77A]">BOOKFOLIO</h1>
-          <span className="text-[10px] tracking-wider uppercase opacity-85 font-body">3D Interactive Portfolio Codex</span>
+          <span className="hidden sm:block text-[10px] tracking-wider uppercase opacity-85 font-body">3D Interactive Portfolio Codex</span>
         </div>
       </div>
 
       <div className="flex items-center space-x-4 relative z-50">
+        <JumpToMenu />
+
+        <ResumePicker />
+
         <button onClick={toggleSound} className="p-2 rounded-full border border-[#D4A574]/40 hover:border-[#D4A574] bg-[#1A2340]/40 text-[#E8C77A] hover:bg-[#1A2340]/80 transition-all" title="Toggle sound FX">
           {soundEnabled ? (
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

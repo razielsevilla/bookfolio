@@ -1,9 +1,12 @@
 "use client";
 import { useState } from 'react';
 import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 export default function Page11ContactForm() {
   const { data } = useBookfolio();
+  const chapter = data.siteContent?.chapters?.page11 ?? DEFAULT_SITE_CONTENT.chapters.page11;
+  const recipientEmail = data.siteContent?.contact?.recipientEmail ?? DEFAULT_SITE_CONTENT.contact.recipientEmail;
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -14,12 +17,23 @@ export default function Page11ContactForm() {
     setError(false);
     
     const form = e.target as HTMLFormElement;
+    const honeypot = (form.elements.namedItem('_honey') as HTMLInputElement).value;
+
+    // Honeypot: real visitors never fill this hidden field. Pretend success for bots.
+    if (honeypot.trim() !== '') {
+      form.reset();
+      setSuccess(true);
+      setLoading(false);
+      setTimeout(() => setSuccess(false), 5000);
+      return;
+    }
+
     const email = (form.elements.namedItem('email') as HTMLInputElement).value;
     const inquiry = (form.elements.namedItem('inquiry') as HTMLSelectElement).value;
     const details = (form.elements.namedItem('details') as HTMLTextAreaElement).value;
 
     try {
-      const response = await fetch("https://formsubmit.co/ajax/raziel.lloyd.sevilla.cs@gmail.com", {
+      const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipientEmail)}`, {
         method: "POST",
         headers: { 
             'Content-Type': 'application/json',
@@ -50,13 +64,21 @@ export default function Page11ContactForm() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER VII : LETTERS TO THE HORIZON</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Dispatch an Envoy</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
       </div>
 
       <div className="flex-1 flex flex-col">
         <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-3 font-body">
+          <input
+            type="text"
+            name="_honey"
+            tabIndex={-1}
+            autoComplete="off"
+            className="hidden"
+            aria-hidden="true"
+          />
           <div>
             <label className="block text-[10px] uppercase tracking-wider text-[var(--paper-primary)] mb-1 font-bold">Email Address</label>
             <input name="email" required type="email" placeholder="you@example.com" className="w-full bg-black/5 border border-[#4E4B46]/35 rounded-lg p-2 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)]" />

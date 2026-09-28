@@ -27,5 +27,18 @@ export default defineType({
       title: 'Description',
       type: 'text',
     }),
+    defineField({
+      name: 'organization',
+      title: 'Organization',
+      type: 'string',
+      description: 'Company/org name — used by the generated CV/résumé.',
+    }),
+    defineField({
+      name: 'bullets',
+      title: 'Résumé Bullets',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Achievement bullet points — used by the generated CV/résumé.',
+    }),
   ],
 })

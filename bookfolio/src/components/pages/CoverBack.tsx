@@ -1,4 +1,11 @@
+"use client";
+import { useBookfolio } from '../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
+
 export default function CoverBack() {
+  const { data } = useBookfolio();
+  const covers = data.siteContent?.covers ?? DEFAULT_SITE_CONTENT.covers;
+
   return (
     <>
       <div className="absolute -inset-8 bg-[radial-gradient(circle_at_center,_rgba(212,165,116,0.05)_0%,_transparent_70%)] pointer-events-none"></div>
@@ -23,15 +30,15 @@ export default function CoverBack() {
           </div>
         </div>
         
-        <h3 className="text-xl font-bold font-headline text-[#E8C77A] tracking-[0.15em]">COLOPHON</h3>
+        <h3 className="text-xl font-bold font-headline text-[#E8C77A] tracking-[0.15em]">{covers.backHeading}</h3>
         <div className="w-8 h-[1px] bg-[#D4A574]/30 mx-auto mt-3 mb-5"></div>
         <p className="text-[11px] text-[#F4EAD5]/70 max-w-[220px] mx-auto font-body leading-relaxed uppercase tracking-wider">
-          Hand-compiled using HTML5 CSS3 preservation matrices and dynamic synthesized physical nodes in 2026.
+          {covers.backDescription}
         </p>
       </div>
 
       <div className="text-[9px] tracking-[0.2em] text-[#D4A574]/80 font-mono z-10 relative mb-2 text-center">
-        &copy; 2026 RAZIEL SEVILLA<br/>ALL RIGHTS RESERVED
+        {covers.backCopyrightLine}<br/>ALL RIGHTS RESERVED
       </div>
     </>
   );

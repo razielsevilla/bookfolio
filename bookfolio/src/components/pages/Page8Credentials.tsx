@@ -1,11 +1,13 @@
 "use client";
 import { useBookfolio } from '../../context/BookfolioContext';
 import { urlFor } from '../../sanity/imageUrl';
+import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
 
 export default function Page8Credentials() {
   const { data, selectedCertificateId } = useBookfolio();
+  const chapter = data.siteContent?.chapters?.page8 ?? DEFAULT_SITE_CONTENT.chapters.page8;
 
-  const activeCert = selectedCertificateId 
+  const activeCert = selectedCertificateId
     ? data.certificates.find(c => c.id === selectedCertificateId) || data.certificates[0]
     : data.certificates[0];
 
@@ -14,8 +16,8 @@ export default function Page8Credentials() {
   return (
     <div className="flex flex-col items-center justify-start h-full text-center">
       <div className="shrink-0 text-left w-full">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">CHAPTER V : SEALS OF VALIDATION</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">Credentials Vault</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
+        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
       </div>
       

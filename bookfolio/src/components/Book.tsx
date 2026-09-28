@@ -1,6 +1,8 @@
 "use client";
-import React from 'react';
+import React, { useRef } from 'react';
 import { useBookfolio } from '../context/BookfolioContext';
+import { useBookKeyboardNav } from '../hooks/useBookKeyboardNav';
+import { useBookScale } from '../hooks/useBookScale';
 import Sheet from './Sheet';
 import Page from './Page';
 
@@ -21,7 +23,11 @@ import Page11ContactForm from './pages/Page11ContactForm';
 import Page12Colophon from './pages/Page12Colophon';
 
 export default function Book() {
-  const { currentSheetIndex, totalSheets } = useBookfolio();
+  const { currentSheetIndex, totalSheets, nextPage, prevPage } = useBookfolio();
+  useBookKeyboardNav(nextPage, prevPage);
+
+  const scalerContainerRef = useRef<HTMLDivElement>(null);
+  const scale = useBookScale(scalerContainerRef);
 
   let transform = 'rotateX(10deg) rotateY(0deg) translateX(0%)';
   if (currentSheetIndex === 0) {
@@ -31,8 +37,8 @@ export default function Book() {
   }
 
   return (
-    <>
-      <div id="book-scaler" className="transition-transform duration-300 ease-out flex items-center justify-center">
+    <div ref={scalerContainerRef} className="w-full h-full flex items-center justify-center">
+      <div id="book-scaler" className="transition-transform duration-300 ease-out flex items-center justify-center" style={{ transform: `scale(${scale})` }}>
         <div className="scene">
           <div className="book" style={{ transform }}>
             <div className="book-spine"></div>
@@ -131,6 +137,6 @@ export default function Book() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

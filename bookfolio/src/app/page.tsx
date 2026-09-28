@@ -8,13 +8,24 @@ import { client } from '../sanity/client';
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function Home() {
-  // Fetch data from Sanity
-  const sanityProjects = await client.fetch(`*[_type == "project"] | order(orderRank asc, _createdAt asc)`);
-  const sanityCertificates = await client.fetch(`*[_type == "certificate"]`);
-  const sanityGuestbook = await client.fetch(`*[_type == "guestbook"] | order(_createdAt desc)`);
-  const sanitySkills = await client.fetch(`*[_type == "skill"]`);
-  const sanityExperiences = await client.fetch(`*[_type == "experience"] | order(startDate desc)`);
-  const sanityAuthor = await client.fetch(`*[_type == "author"][0]`);
+  // Fetch data from Sanity (in parallel — independent queries, no need to wait on each other)
+  const [
+    sanityProjects,
+    sanityCertificates,
+    sanityGuestbook,
+    sanitySkills,
+    sanityExperiences,
+    sanityAuthor,
+    sanitySiteContent,
+  ] = await Promise.all([
+    client.fetch(`*[_type == "project"] | order(orderRank asc, _createdAt asc)`),
+    client.fetch(`*[_type == "certificate"]`),
+    client.fetch(`*[_type == "guestbook"] | order(_createdAt desc)`),
+    client.fetch(`*[_type == "skill"]`),
+    client.fetch(`*[_type == "experience"] | order(startDate desc)`),
+    client.fetch(`*[_type == "author"][0]`),
+    client.fetch(`*[_type == "siteContent"][0]`),
+  ]);
 
   const initialData = {
     projects: sanityProjects,
@@ -23,6 +34,7 @@ export default async function Home() {
     skills: sanitySkills,
     experiences: sanityExperiences,
     author: sanityAuthor || undefined,
+    siteContent: sanitySiteContent || undefined,
   };
 
   return (
