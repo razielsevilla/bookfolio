@@ -24,19 +24,6 @@ export const DEFAULT_SITE_CONTENT: SiteContent = {
   },
   contact: {
     recipientEmail: 'raziel.lloyd.sevilla.cs@gmail.com',
-  },
-  chapters: {
-    page1: { chapterLabel: "CHAPTER I : THE SCRIBE'S AWAKENING", title: 'The Reader & Creator' },
-    page2: { chapterLabel: "CHAPTER I : THE SCRIBE'S AWAKENING", title: 'Our Narrative Path' },
-    page3: { chapterLabel: 'CHAPTER II : TRAILS & CHRONICLES', title: 'Chronicles of the Crucible' },
-    page4: { chapterLabel: 'CHAPTER III : THE ARCANUM OF CRAFTS', title: 'The Guild of Instruments' },
-    page5: { chapterLabel: 'CHAPTER IV : RELICS OF CREATION', title: 'The Great Forge' },
-    page6: { chapterLabel: 'CHAPTER IV : RELICS OF CREATION', title: 'The Great Forge' },
-    page7: { chapterLabel: 'CHAPTER V : SEALS OF VALIDATION', title: 'Credentials Vault' },
-    page8: { chapterLabel: 'CHAPTER V : SEALS OF VALIDATION', title: 'Credentials Vault' },
-    page9: { chapterLabel: 'CHAPTER VI : ECHOES FROM THE LEDGER', title: 'Inscribe Your Tale' },
-    page10: { chapterLabel: 'CHAPTER VI : ECHOES FROM THE LEDGER', title: 'The Scroll of Greetings' },
-    page11: { chapterLabel: 'CHAPTER VII : LETTERS TO THE HORIZON', title: 'Dispatch an Envoy' },
-    page12: { chapterLabel: 'CHAPTER VII : LETTERS TO THE HORIZON', title: 'Connect Privately' },
+    location: 'Laguna, Philippines',
   },
 };

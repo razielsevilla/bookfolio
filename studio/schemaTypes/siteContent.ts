@@ -1,27 +1,30 @@
 import { defineField, defineType } from 'sanity'
 
-// One field pair per page component: { chapterLabel, title }.
-// Sub-field `title` (e.g. "Page 4 — Skills") is how this maps back to the book for a non-technical editor.
+// One field group per chapter: { title, leftSubtitle, rightSubtitle }.
+// `studioTitle` names the chapter for a non-technical editor; the book's
+// chapter order/pages themselves stay fixed in code (bookfolio/src/lib/chapters.ts) —
+// only this chapter's title and its two page headings are editable here.
 const chapterField = (name: string, studioTitle: string) =>
   defineField({
     name,
     title: studioTitle,
     type: 'object',
     fields: [
-      defineField({ name: 'chapterLabel', title: 'Chapter Label', type: 'string' }),
-      defineField({ name: 'title', title: 'Section Title', type: 'string' }),
+      defineField({ name: 'title', title: 'Chapter Title', type: 'string' }),
+      defineField({ name: 'leftSubtitle', title: 'Left Page Subtitle', type: 'string' }),
+      defineField({ name: 'rightSubtitle', title: 'Right Page Subtitle', type: 'string' }),
     ],
   })
 
 export default defineType({
   name: 'siteContent',
-  title: 'Site Content',
+  title: 'Site Content — Covers & Chapter VIII',
   type: 'document',
   groups: [
     { name: 'covers', title: 'Covers' },
     { name: 'colophon', title: 'Colophon' },
     { name: 'contact', title: 'Contact' },
-    { name: 'chapters', title: 'Chapter Titles' },
+    { name: 'chapters', title: 'Chapter Titles & Subtitles' },
   ],
   fields: [
     defineField({
@@ -98,23 +101,25 @@ export default defineType({
     }),
     defineField({
       name: 'chapters',
-      title: 'Chapter Titles',
+      title: 'Chapter Titles & Subtitles',
       type: 'object',
       group: 'chapters',
+      description: 'The book always has these 8 chapters in this order — only their title/subtitle text is editable here.',
       fields: [
-        chapterField('page1', 'Page 1 — Bio'),
-        chapterField('page2', 'Page 2 — Timeline'),
-        chapterField('page3', 'Page 3 — Experience'),
-        chapterField('page4', 'Page 4 — Skills'),
-        chapterField('page5', 'Page 5 — Projects List'),
-        chapterField('page6', 'Page 6 — Projects (Detail)'),
-        chapterField('page7', 'Page 7 — Credentials List'),
-        chapterField('page8', 'Page 8 — Credentials (Detail)'),
-        chapterField('page9', 'Page 9 — Guestbook Form'),
-        chapterField('page10', 'Page 10 — Guestbook List'),
-        chapterField('page11', 'Page 11 — Contact Form'),
-        chapterField('page12', 'Page 12 — Colophon'),
+        chapterField('chapter1', 'Chapter I — Prologue'),
+        chapterField('chapter2', 'Chapter II — Grimoire of Competencies'),
+        chapterField('chapter3', 'Chapter III — Chronicles of Experience'),
+        chapterField('chapter4', 'Chapter IV — The Forge'),
+        chapterField('chapter5', 'Chapter V — Academic Inscriptions'),
+        chapterField('chapter6', 'Chapter VI — Accolades & Milestones'),
+        chapterField('chapter7', 'Chapter VII — The Fellowship'),
+        chapterField('chapter8', 'Chapter VIII — The Dispatch'),
       ],
     }),
   ],
+  preview: {
+    prepare() {
+      return { title: 'Site Content', subtitle: 'Covers, colophon, contact & chapter titles' }
+    },
+  },
 })

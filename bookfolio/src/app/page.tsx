@@ -13,32 +13,35 @@ export default async function Home() {
     sanityProjects,
     sanityCertificates,
     sanityGuestbook,
-    sanitySkills,
     sanityExperiences,
     sanityAuthor,
     sanitySiteContent,
+    sanityCompetencies,
+    sanityAwards,
   ] = await Promise.all([
     client.fetch(`*[_type == "project"] | order(orderRank asc, _createdAt asc)`),
-    client.fetch(`*[_type == "certificate"]`),
+    client.fetch(`*[_type == "certificate"] | order(orderRank asc, _createdAt asc)`),
     client.fetch(`*[_type == "guestbook"] | order(_createdAt desc)`),
-    client.fetch(`*[_type == "skill"]`),
     client.fetch(`*[_type == "experience"] | order(startDate desc)`),
     client.fetch(`*[_type == "author"][0]`),
     client.fetch(`*[_type == "siteContent"][0]`),
+    client.fetch(`*[_type == "competencies"][0]`),
+    client.fetch(`*[_type == "award"] | order(orderRank asc, _createdAt asc)`),
   ]);
 
   const initialData = {
     projects: sanityProjects,
     certificates: sanityCertificates,
     guestbook: sanityGuestbook,
-    skills: sanitySkills,
     experiences: sanityExperiences,
     author: sanityAuthor || undefined,
     siteContent: sanitySiteContent || undefined,
+    competencies: sanityCompetencies || undefined,
+    awards: sanityAwards,
   };
 
   return (
-    <BookfolioProvider totalSheets={7} initialData={initialData}>
+    <BookfolioProvider totalSheets={9} initialData={initialData}>
       <Header />
       <div className="hidden lg:flex flex-grow items-center justify-center relative p-4 overflow-hidden z-10">
         <Book />

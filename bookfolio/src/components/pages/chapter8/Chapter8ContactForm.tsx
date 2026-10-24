@@ -1,11 +1,14 @@
 "use client";
 import { useState } from 'react';
-import { useBookfolio } from '../../context/BookfolioContext';
-import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
+import { useBookfolio } from '../../../context/BookfolioContext';
+import { DEFAULT_SITE_CONTENT } from '../../../lib/defaultSiteContent';
+import type { ChapterPageProps } from '../../../lib/chapters';
 
-export default function Page11ContactForm() {
+// Chapter VIII — Left Page: Dispatch an Envoy (contact form)
+// Restored from the pre-restructure Page11ContactForm.tsx — same
+// FormSubmit.co-backed email dispatch, same honeypot spam guard.
+export default function Chapter8ContactForm({ chapterTitle, subtitle }: ChapterPageProps) {
   const { data } = useBookfolio();
-  const chapter = data.siteContent?.chapters?.page11 ?? DEFAULT_SITE_CONTENT.chapters.page11;
   const recipientEmail = data.siteContent?.contact?.recipientEmail ?? DEFAULT_SITE_CONTENT.contact.recipientEmail;
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -15,7 +18,7 @@ export default function Page11ContactForm() {
     e.preventDefault();
     setLoading(true);
     setError(false);
-    
+
     const form = e.target as HTMLFormElement;
     const honeypot = (form.elements.namedItem('_honey') as HTMLInputElement).value;
 
@@ -35,7 +38,7 @@ export default function Page11ContactForm() {
     try {
       const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(recipientEmail)}`, {
         method: "POST",
-        headers: { 
+        headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
@@ -64,8 +67,8 @@ export default function Page11ContactForm() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapterTitle}</span>
+        <h3 className="text-xl font-bold mt-1 font-headline text-[#1A2340]">{subtitle}</h3>
         <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
       </div>
 

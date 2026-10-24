@@ -29,6 +29,10 @@ body {
 /* Universal font mapping */
 h1, h2, h3, h4, .font-headline {
   font-family: var(--font-cormorant), serif;
+  /* Cormorant's default old-style figures give some digits (e.g. "3") a
+     descender that reads as a subscript next to letters (e.g. "Web3").
+     Force lining (baseline-aligned) numerals instead. */
+  font-variant-numeric: lining-nums;
 }
 
 p, span, label, input, textarea, select, button, .font-body {
@@ -261,6 +265,30 @@ p, span, label, input, textarea, select, button, .font-body {
   border-radius: 10px;
 }
 
+/* Ink-bleed crossfade: re-triggered by remounting the detail container on a
+   `key` change (e.g. selecting a different master-detail item), so switching
+   records feels like a page settling rather than an abrupt content swap. */
+@keyframes ink-bleed-in {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.ink-bleed-in {
+  animation: ink-bleed-in 320ms ease-out;
+}
+
+/* Subtle fade near the bottom edge hints at scrollable overflow even before
+   the reader has scrolled, without needing JS scroll-position tracking. */
+.page-scroll {
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 28px), transparent 100%);
+  mask-image: linear-gradient(to bottom, black calc(100% - 28px), transparent 100%);
+}
+
 .ambient-glow {
   position: absolute;
   inset: 0;
@@ -302,6 +330,57 @@ p, span, label, input, textarea, select, button, .font-body {
 .corner-curl-left:hover {
   opacity: 1;
   transform: scale(1.1);
+}
+
+/* Mobile page-flip — a single-page analogue of the desktop two-page spread's
+   3D mechanics (perspective + rotateY + backface-visibility), so turning a
+   page on mobile is a real flip around the spine edge instead of a flat
+   horizontal slide. Each page sits at rotateY(0) until its turn, then
+   rotates away to -180deg (hidden by backface-visibility) to reveal the
+   next page, which was already waiting underneath at rotateY(0). */
+.mobile-scene {
+  perspective: 1600px;
+  perspective-origin: 50% 50%;
+  /* Shares one 3D rendering context across sibling pages so the actively
+     rotating page depth-sorts correctly in front of/behind the waiting
+     stack during the flip — without this, each page flattens into its own
+     independent layer and ordinary z-index (which must drop immediately
+     when a page starts flipping away) hides the animation entirely. Note:
+     `overflow` other than `visible` forces `transform-style` back to `flat`
+     per spec, so this container must NOT have overflow-hidden. */
+  transform-style: preserve-3d;
+}
+
+.mobile-page-flip {
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* NOT the desktop book's curve on purpose: desktop's aggressive ease-out
+     (0.25,1,0.5,1) front-loads ~80% of the rotation into the first ~15% of
+     its 1.2s duration, then creeps slowly through the rest — but that slow
+     tail is what gracefully reveals a sheet's BACK face as it settles past
+     90deg. A single mobile page has no back face to hand off to; the next
+     page just appears the instant this one crosses 90deg and disappears
+     (backface-visibility: hidden has no fade, it's a hard cutoff). Applying
+     desktop's curve here compresses the only visible part of the animation
+     (0-90deg) into ~50ms, reading as an instant swap. An even ease-in-out
+     keeps that 0-90deg arc perceptible for roughly half the duration instead.
+  */
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-spine {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 8px;
+  background: var(--spine-bg);
+  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.5), 2px 0 10px rgba(0, 0, 0, 0.35);
+  z-index: 30;
+  pointer-events: none;
+  border-radius: 4px 0 0 4px;
 }
 
 @keyframes pulse-ring {

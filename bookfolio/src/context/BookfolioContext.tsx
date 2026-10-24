@@ -3,23 +3,36 @@ import React, { createContext, useContext, useState, useCallback, ReactNode } fr
 import { usePageFlipAudio } from '../hooks/usePageFlipAudio';
 
 export interface Project {
-  id: string;
+  _id: string;
   title: string;
   subtitle?: string;
-  desc: string;
-  tech: string;
-  collaborators?: string;
+  award?: string;
+  featured?: boolean;
+  orderRank?: number;
+  previewImage?: any;
+  previewCaption?: string;
+  desc?: string;
+  caseStudyChallenge?: string;
+  caseStudyArchitecture?: string;
+  tech?: string;
   repoUrl?: string;
   liveUrl?: string;
   landingUrl?: string;
 }
 
 export interface Certificate {
-  id: string;
+  _id: string;
+  orderRank?: number;
   title: string;
-  issuer: string;
-  tag: string;
+  category?: string;
+  issuer?: string;
+  issueDate?: string;
+  credentialId?: string;
+  verifyUrl?: string;
+  pdfUrl?: string;
+  highlights?: string[];
   image?: any;
+  previewCaption?: string;
 }
 
 export interface GuestbookEntry {
@@ -29,37 +42,34 @@ export interface GuestbookEntry {
   date: string;
 }
 
-export interface Skill {
-  id: string;
-  _id?: string;
-  name: string;
-  category?: string;
-  percentage: number;
-  description: string;
-  iconSvg?: string;
+export interface Experience {
+  _id: string;
+  title: string;
+  organization?: string;
+  yearRange: string;
+  location?: string;
+  focus?: string;
+  bullets?: string[];
+  pageSide?: 'left' | 'right';
 }
 
-export interface Experience {
-  id: string;
-  yearRange: string;
-  title: string;
-  description: string;
+export interface EducationEntry {
+  institution: string;
+  dateRange: string;
+  programs?: string[];
 }
 
 export interface Author {
   name: string;
   role: string;
-  bioParagraph1: string;
-  bioParagraph2: string;
-  quote?: string;
-  page2Paragraph1?: string;
-  page2Quote?: string;
-  page2Paragraph2?: string;
-}
-
-export interface ChapterEntry {
-  chapterLabel: string;
-  title: string;
+  photo?: any;
+  affiliation?: string;
+  availabilityStatus?: string;
+  manifesto?: string;
+  summaryNarrative?: string;
+  corePillars?: string[];
+  // Résumé-only — not shown in any book chapter.
+  educationHistory?: EducationEntry[];
 }
 
 export interface SocialLink {
@@ -85,38 +95,74 @@ export interface SiteContentColophon {
 
 export interface SiteContentContact {
   recipientEmail: string;
+  location?: string;
+  phone?: string;
+}
+
+export interface ChapterContentEntry {
+  title?: string;
+  leftSubtitle?: string;
+  rightSubtitle?: string;
 }
 
 export interface SiteContentChapters {
-  page1: ChapterEntry;
-  page2: ChapterEntry;
-  page3: ChapterEntry;
-  page4: ChapterEntry;
-  page5: ChapterEntry;
-  page6: ChapterEntry;
-  page7: ChapterEntry;
-  page8: ChapterEntry;
-  page9: ChapterEntry;
-  page10: ChapterEntry;
-  page11: ChapterEntry;
-  page12: ChapterEntry;
+  chapter1?: ChapterContentEntry;
+  chapter2?: ChapterContentEntry;
+  chapter3?: ChapterContentEntry;
+  chapter4?: ChapterContentEntry;
+  chapter5?: ChapterContentEntry;
+  chapter6?: ChapterContentEntry;
+  chapter7?: ChapterContentEntry;
+  chapter8?: ChapterContentEntry;
 }
 
 export interface SiteContent {
   covers: SiteContentCovers;
   colophon: SiteContentColophon;
   contact: SiteContentContact;
-  chapters: SiteContentChapters;
+  chapters?: SiteContentChapters;
+}
+
+export interface CompetencyGroup {
+  label: string;
+  tags: string[];
+}
+
+export interface CompetencySection {
+  title: string;
+  groups: CompetencyGroup[];
+}
+
+export interface Competencies {
+  sections: CompetencySection[];
+}
+
+export interface Award {
+  _id: string;
+  orderRank?: number;
+  title: string;
+  category?: string;
+  distinctionTier?: string;
+  team?: string;
+  hostOrganization?: string;
+  dateAwarded?: string;
+  location?: string;
+  impactScopeScale?: string;
+  impactDeliveredBuild?: string;
+  impactCoreCompetencies?: string;
+  image?: any;
+  previewCaption?: string;
 }
 
 export interface BookfolioData {
   projects: Project[];
   certificates: Certificate[];
   guestbook: GuestbookEntry[];
-  skills?: Skill[];
   experiences?: Experience[];
   author?: Author;
   siteContent?: SiteContent;
+  competencies?: Competencies;
+  awards?: Award[];
 }
 
 interface BookfolioContextType {
@@ -137,6 +183,8 @@ interface BookfolioContextType {
   setSelectedProject: (id: string) => void;
   selectedCertificateId: string | null;
   setSelectedCertificate: (id: string) => void;
+  selectedAwardId: string | null;
+  setSelectedAward: (id: string) => void;
   addGuestbookEntry: (entry: GuestbookEntry) => void;
 }
 
@@ -150,6 +198,7 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
   const [data, setData] = useState<BookfolioData>(initialData);
   const [selectedProjectId, setSelectedProject] = useState<string | null>(null);
   const [selectedCertificateId, setSelectedCertificate] = useState<string | null>(null);
+  const [selectedAwardId, setSelectedAward] = useState<string | null>(null);
   const { playPageFlipAudio } = usePageFlipAudio(soundEnabled);
 
   const addGuestbookEntry = useCallback((entry: GuestbookEntry) => {
@@ -227,6 +276,7 @@ export function BookfolioProvider({ children, totalSheets, initialData }: { chil
       playPageFlipAudio, data,
       selectedProjectId, setSelectedProject,
       selectedCertificateId, setSelectedCertificate,
+      selectedAwardId, setSelectedAward,
       addGuestbookEntry
     }}>
       {children}

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from 'react';
-import { useBookfolio } from '../../context/BookfolioContext';
-import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
+import { useBookfolio } from '../../../context/BookfolioContext';
+import type { ChapterPageProps } from '../../../lib/chapters';
 
 const EMBLEMS: Record<string, React.ReactNode> = {
   '✍️': <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>,
@@ -11,9 +11,13 @@ const EMBLEMS: Record<string, React.ReactNode> = {
   '🛡️': <svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>,
 };
 
-export default function Page9Guestbook() {
-  const { data, addGuestbookEntry, nextPage } = useBookfolio();
-  const chapter = data.siteContent?.chapters?.page9 ?? DEFAULT_SITE_CONTENT.chapters.page9;
+// Chapter VII — Left Page: Inscribe Your Tale (guestbook submission form)
+// Restored from the pre-restructure Page9Guestbook.tsx (same form, same API,
+// same spam guards) — only the auto-flip-to-next-page behavior was dropped,
+// since the Scroll of Greetings is now the right page of this SAME spread
+// (always visible right next to the form) rather than a separate later page.
+export default function Chapter7Inscribe({ chapterTitle, subtitle }: ChapterPageProps) {
+  const { addGuestbookEntry } = useBookfolio();
   const [selectedEmoji, setSelectedEmoji] = useState('✍️');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +58,8 @@ export default function Page9Guestbook() {
       const now = new Date();
       const dateString = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-      // Add to local state instantly
+      // Add to local state instantly — the Scroll of Greetings on the facing
+      // page reads this same context state, so it updates immediately.
       addGuestbookEntry({
         name,
         message,
@@ -64,12 +69,7 @@ export default function Page9Guestbook() {
 
       setSuccess(true);
       form.reset();
-      
-      // Flip to next page automatically after short delay
-      setTimeout(() => {
-        nextPage();
-        setSuccess(false); // reset for next time they come back
-      }, 1500);
+      setTimeout(() => setSuccess(false), 2500);
 
     } catch (err: any) {
       setError(err.message);
@@ -81,9 +81,9 @@ export default function Page9Guestbook() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
-        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-3"></div>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapterTitle}</span>
+        <h3 className="text-xl font-bold mt-1 font-headline text-[#1A2340]">{subtitle}</h3>
+        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
       </div>
 
       <div className="flex-1 flex flex-col justify-center pb-2">
@@ -95,7 +95,7 @@ export default function Page9Guestbook() {
 
         {success && (
           <div className="p-2 mb-3 bg-green-500/10 border border-green-500/30 rounded-lg text-xs text-green-700 font-body font-bold text-center">
-            Inscribed successfully! Turning page...
+            Inscribed successfully!
           </div>
         )}
 
@@ -117,10 +117,10 @@ export default function Page9Guestbook() {
             <label className="text-[9px] uppercase tracking-widest text-[var(--paper-primary)] font-bold block mb-1">Select Emblem</label>
             <div className="flex items-center space-x-2 bg-black/5 border border-[#4E4B46]/20 rounded-lg p-1.5">
               {Object.keys(EMBLEMS).map(emoji => (
-                <button 
+                <button
                   key={emoji}
-                  type="button" 
-                  onClick={() => setSelectedEmoji(emoji)} 
+                  type="button"
+                  onClick={() => setSelectedEmoji(emoji)}
                   className={`emoji-btn flex-1 py-1.5 rounded-md transition-all duration-200 text-[#1A2340] ${selectedEmoji === emoji ? 'bg-white/50 scale-105 drop-shadow-sm opacity-100 ring-1 ring-[var(--paper-primary)]/30 text-[var(--paper-primary)]' : 'opacity-40 hover:opacity-70 hover:bg-black/5'}`}
                 >
                   {EMBLEMS[emoji]}
@@ -133,7 +133,7 @@ export default function Page9Guestbook() {
             <label className="text-[9px] uppercase tracking-widest text-[var(--paper-primary)] font-bold block mb-1">Your Message</label>
             <textarea required name="message" placeholder="Write a short greeting..." className="w-full flex-1 bg-black/5 border border-[#4E4B46]/20 rounded-lg p-2.5 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] placeholder-[#1A2340]/40 resize-none min-h-[80px]"></textarea>
           </div>
-          
+
           <div className="pt-1 shrink-0">
             <button disabled={isSubmitting} type="submit" className="w-full bg-[#1A2340] text-[#F4EAD5] font-bold text-xs py-3 rounded-lg hover:bg-[#243054] transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-70 disabled:cursor-not-allowed">
               {isSubmitting ? (

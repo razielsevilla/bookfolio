@@ -8,22 +8,15 @@ export interface ResumeExperienceEntry {
   bullets?: string[];
 }
 
-export interface ResumeActivityEntry {
-  title: string;
-  organization?: string;
-  dateRange: string;
-  bullets?: string[];
-}
-
 export interface ResumeEducationEntry {
   institution: string;
   dateRange: string;
   programs?: string[];
 }
 
-export interface ResumeSkillEntry {
-  name: string;
-  description?: string;
+export interface ResumeSkillGroup {
+  sectionTitle: string;
+  skills: string[];
 }
 
 export interface ResumeSocialLink {
@@ -40,9 +33,8 @@ export interface ResumeData {
   portfolioUrl?: string;
   socials: ResumeSocialLink[];
   experience: ResumeExperienceEntry[];
-  activities: ResumeActivityEntry[];
   education: ResumeEducationEntry[];
-  skills: ResumeSkillEntry[];
+  skills: ResumeSkillGroup[];
 }
 
 const styles = StyleSheet.create({
@@ -193,9 +185,9 @@ export default function ResumeDocument({ data }: { data: ResumeData }) {
         {data.skills.length > 0 && (
           <>
             <Text style={styles.sectionHeading}>Skills</Text>
-            {data.skills.map((skill, i) => (
+            {data.skills.map((group, i) => (
               <Text key={i} style={styles.skillLine}>
-                <Text style={styles.bold}>{skill.name}:</Text> {skill.description}
+                <Text style={styles.bold}>{group.sectionTitle}:</Text> {group.skills.join(', ')}
               </Text>
             ))}
           </>
@@ -210,21 +202,6 @@ export default function ResumeDocument({ data }: { data: ResumeData }) {
                 title={entry.title}
                 organization={entry.organization}
                 dateRange={entry.yearRange}
-                bullets={entry.bullets}
-              />
-            ))}
-          </>
-        )}
-
-        {data.activities.length > 0 && (
-          <>
-            <Text style={styles.sectionHeading}>Activities</Text>
-            {data.activities.map((entry, i) => (
-              <EntryBlock
-                key={i}
-                title={entry.title}
-                organization={entry.organization}
-                dateRange={entry.dateRange}
                 bullets={entry.bullets}
               />
             ))}

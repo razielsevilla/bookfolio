@@ -2,20 +2,19 @@
 import { useRef, useState } from 'react';
 import { useBookfolio } from '../context/BookfolioContext';
 import { useDismissOnOutsideOrEscape } from '../hooks/useDismissOnOutsideOrEscape';
-
-// `target` is the currentSheetIndex that reveals this section's back page
-// (sheet index + 1 — a sheet must be flipped for its back page to show).
-const SECTIONS = [
-  { label: 'Experience', target: 2 },
-  { label: 'Projects', target: 3 },
-  { label: 'Credentials', target: 4 },
-  { label: 'Contact', target: 6 },
-];
+import { CHAPTERS, resolveChapterContent } from '../lib/chapters';
 
 export default function JumpToMenu() {
-  const { goToSheet } = useBookfolio();
+  const { goToSheet, data } = useBookfolio();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // `target` is the currentSheetIndex that reveals this chapter's full spread
+  // (chapters are 1-indexed sheet targets — see Book.tsx).
+  const sections = CHAPTERS.map((chapter, idx) => ({
+    label: resolveChapterContent(chapter, data.siteContent?.chapters).title,
+    target: idx + 1,
+  }));
 
   useDismissOnOutsideOrEscape(containerRef, isOpen, () => setIsOpen(false));
 
@@ -45,7 +44,7 @@ export default function JumpToMenu() {
           role="menu"
           className="absolute top-full right-0 mt-2 w-44 bg-[#1A2340]/95 border border-[#D4A574]/40 rounded-xl shadow-lg backdrop-blur-md overflow-hidden z-50"
         >
-          {SECTIONS.map(section => (
+          {sections.map(section => (
             <button
               key={section.label}
               role="menuitem"

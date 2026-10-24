@@ -1,6 +1,6 @@
 "use client";
-import { useBookfolio } from '../../context/BookfolioContext';
-import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
+import { useBookfolio } from '../../../context/BookfolioContext';
+import type { ChapterPageProps } from '../../../lib/chapters';
 
 const EMBLEMS: Record<string, React.ReactNode> = {
   '✍️': <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>,
@@ -10,29 +10,32 @@ const EMBLEMS: Record<string, React.ReactNode> = {
   '🛡️': <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>,
 };
 
-export default function Page10GuestbookList() {
+// Chapter VII — Right Page: The Scroll of Greetings (guestbook display)
+// Restored verbatim (styling/behavior) from the pre-restructure
+// Page10GuestbookList.tsx — now the facing page of the Inscribe form
+// instead of a separate later page, so new entries appear immediately.
+export default function Chapter7GreetingsScroll({ chapterTitle, subtitle }: ChapterPageProps) {
   const { data } = useBookfolio();
-  const chapter = data.siteContent?.chapters?.page10 ?? DEFAULT_SITE_CONTENT.chapters.page10;
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0">
-        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapter.chapterLabel}</span>
-        <h3 className="text-2xl font-bold mt-1 font-headline text-[#1A2340]">{chapter.title}</h3>
-        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-6"></div>
+        <span className="text-xs uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{chapterTitle}</span>
+        <h3 className="text-xl font-bold mt-1 font-headline text-[#1A2340]">{subtitle}</h3>
+        <div className="w-16 h-[2px] bg-[var(--paper-primary)]/30 mt-1 mb-4"></div>
       </div>
 
       <div className="flex-1 flex flex-col overflow-y-auto page-scroll pr-1 pb-2">
         <div className="p-3 bg-[var(--paper-primary)]/10 rounded-xl border border-[var(--paper-primary)]/30 mb-4 text-xs leading-relaxed text-[#1A2340]/90 font-body relative overflow-hidden shrink-0">
           <div className="absolute top-0 left-0 w-1 h-full bg-[var(--paper-primary)]/50"></div>
-          <strong>Leave Your Mark:</strong> The Codex is open to fellow travelers. Select an emblem, share your name, and inscribe a brief greeting on the previous page to be recorded here in the ledger.
+          <strong>Leave Your Mark:</strong> The Codex is open to fellow travelers. Select an emblem, share your name, and inscribe a brief greeting on the facing page to be recorded here in the ledger.
         </div>
 
         {(!data.guestbook || data.guestbook.length === 0) ? (
           <div className="flex-1 flex flex-col items-center justify-center opacity-50 text-center font-body text-xs px-4 pb-10">
             <svg className="w-10 h-10 mb-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
             <p>The scroll is currently blank.</p>
-            <p className="mt-1">Be the first to inscribe a tale on the previous page.</p>
+            <p className="mt-1">Be the first to inscribe a tale on the facing page.</p>
           </div>
         ) : (
           <div className="space-y-2">

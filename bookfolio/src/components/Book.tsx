@@ -5,26 +5,33 @@ import { useBookKeyboardNav } from '../hooks/useBookKeyboardNav';
 import { useBookScale } from '../hooks/useBookScale';
 import Sheet from './Sheet';
 import Page from './Page';
-
-// Placeholder content components, these will be replaced with real components
 import CoverFront from './pages/CoverFront';
 import CoverBack from './pages/CoverBack';
-import Page1Bio from './pages/Page1Bio';
-import Page2Timeline from './pages/Page2Timeline';
-import Page3Experience from './pages/Page3Experience';
-import Page4Skills from './pages/Page4Skills';
-import Page5ProjectsList from './pages/Page5ProjectsList';
-import Page6Projects1 from './pages/Page6Projects1';
-import Page7Projects2 from './pages/Page7Projects2';
-import Page8Credentials from './pages/Page8Credentials';
-import Page9Guestbook from './pages/Page9Guestbook';
-import Page10GuestbookList from './pages/Page10GuestbookList';
-import Page11ContactForm from './pages/Page11ContactForm';
-import Page12Colophon from './pages/Page12Colophon';
+import ChapterPage from './pages/ChapterPage';
+import { CHAPTERS, ChapterDef, resolveChapterContent, toRoman } from '../lib/chapters';
+
+// One sheet per chapter boundary: sheet 0's front is the front cover, sheet
+// N's back is the back cover, and every sheet in between carries one
+// chapter's right (front) page and the next chapter's left (back) page. This
+// means flipping sheet `i` (i.e. going to sheet index i+1) reveals chapter
+// `i+1` as a complete, self-contained left+right spread — one flip per chapter.
+const NUM_SHEETS = CHAPTERS.length + 1;
+
+function renderChapterSide(
+  chapter: ChapterDef,
+  side: 'left' | 'right',
+  content: { title: string; leftSubtitle: string; rightSubtitle: string }
+) {
+  const Component = side === 'left' ? chapter.LeftComponent : chapter.RightComponent;
+  const subtitle = side === 'left' ? content.leftSubtitle : content.rightSubtitle;
+  if (Component) return <Component chapterTitle={content.title} subtitle={subtitle} />;
+  return <ChapterPage title={content.title} subtitle={subtitle} />;
+}
 
 export default function Book() {
-  const { currentSheetIndex, totalSheets, nextPage, prevPage } = useBookfolio();
+  const { currentSheetIndex, totalSheets, nextPage, prevPage, data } = useBookfolio();
   useBookKeyboardNav(nextPage, prevPage);
+  const chapterContents = CHAPTERS.map(chapter => resolveChapterContent(chapter, data.siteContent?.chapters));
 
   const scalerContainerRef = useRef<HTMLDivElement>(null);
   const scale = useBookScale(scalerContainerRef);
@@ -42,97 +49,33 @@ export default function Book() {
         <div className="scene">
           <div className="book" style={{ transform }}>
             <div className="book-spine"></div>
-            
-            {/* Sheet 1 */}
-            <Sheet 
-              sheetIndex={0} 
-              tabs={[{ title: "I", tooltip: "I: Awakening", top: 60, target: 1 }]}
-            >
-              <Page side="front" isCover>
-                <CoverFront />
-              </Page>
-              <Page side="back" pageNumber={1}>
-                <Page1Bio />
-              </Page>
-            </Sheet>
 
-            {/* Sheet 2 */}
-            <Sheet 
-              sheetIndex={1} 
-              tabs={[{ title: "II", tooltip: "II: Chronicles", top: 120, target: 2 }]}
-            >
-              <Page side="front" pageNumber={2}>
-                <Page2Timeline />
-              </Page>
-              <Page side="back" pageNumber={3}>
-                <Page3Experience />
-              </Page>
-            </Sheet>
+            {Array.from({ length: NUM_SHEETS }, (_, i) => {
+              const isFirst = i === 0;
+              const isLast = i === NUM_SHEETS - 1;
+              const chapterIndex = i + 1; // 1-indexed chapter this sheet's tab reveals
+              const roman = toRoman(chapterIndex);
 
-            {/* Sheet 3 */}
-            <Sheet 
-              sheetIndex={2} 
-              tabs={[{ title: "III", tooltip: "III: Arcanum", top: 180, target: 2 }]}
-            >
-              <Page side="front" pageNumber={4}>
-                <Page4Skills />
-              </Page>
-              <Page side="back" pageNumber={5}>
-                <Page5ProjectsList />
-              </Page>
-            </Sheet>
-
-            {/* Sheet 4 */}
-            <Sheet 
-              sheetIndex={3}
-              tabs={[{ title: "IV", tooltip: "IV: Relics", top: 240, target: 3 }]}
-            >
-              <Page side="front" pageNumber={6}>
-                <Page6Projects1 />
-              </Page>
-              <Page side="back" pageNumber={7}>
-                <Page8Credentials />
-              </Page>
-            </Sheet>
-
-            {/* Sheet 5 */}
-            <Sheet 
-              sheetIndex={4} 
-              tabs={[{ title: "V", tooltip: "V: Seals", top: 300, target: 4 }]}
-            >
-              <Page side="front" pageNumber={8}>
-                <Page7Projects2 />
-              </Page>
-              <Page side="back" pageNumber={9}>
-                <Page9Guestbook />
-              </Page>
-            </Sheet>
-
-            {/* Sheet 6 */}
-            <Sheet 
-              sheetIndex={5} 
-              tabs={[{ title: "VI", tooltip: "VI: Echoes", top: 360, target: 5 }]}
-            >
-              <Page side="front" pageNumber={10}>
-                <Page10GuestbookList />
-              </Page>
-              <Page side="back" pageNumber={11}>
-                <Page11ContactForm />
-              </Page>
-            </Sheet>
-
-            {/* Sheet 7 */}
-            <Sheet 
-              sheetIndex={6}
-              tabs={[{ title: "VII", tooltip: "VII: Letters", top: 420, target: 6 }]}
-            >
-              <Page side="front" pageNumber={12}>
-                <Page12Colophon />
-              </Page>
-              <Page side="back" isCover>
-                <CoverBack />
-              </Page>
-            </Sheet>
+              return (
+                <Sheet
+                  key={i}
+                  sheetIndex={i}
+                  tabs={isLast ? undefined : [{
+                    title: roman,
+                    tooltip: `${roman}: ${chapterContents[i].title}`,
+                    top: 60 * chapterIndex,
+                    target: chapterIndex,
+                  }]}
+                >
+                  <Page side="front" isCover={isFirst} pageNumber={isFirst ? undefined : 2 * i}>
+                    {isFirst ? <CoverFront /> : renderChapterSide(CHAPTERS[i - 1], 'right', chapterContents[i - 1])}
+                  </Page>
+                  <Page side="back" isCover={isLast} pageNumber={isLast ? undefined : 2 * i + 1}>
+                    {isLast ? <CoverBack /> : renderChapterSide(CHAPTERS[i], 'left', chapterContents[i])}
+                  </Page>
+                </Sheet>
+              );
+            })}
 
           </div>
         </div>

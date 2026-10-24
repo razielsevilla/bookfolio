@@ -1,20 +1,14 @@
 "use client";
 import { useBookfolio } from '../context/BookfolioContext';
-
-const chapterLabels = [
-  "Cover at Rest",
-  "Chapter I: The Scribe's Awakening",
-  "Chapter II: Trails & Chronicles",
-  "Chapter III: The Arcanum of Crafts",
-  "Chapter IV: Relics of Creation",
-  "Chapter V: Seals of Validation",
-  "Chapter VI: Echoes from the Ledger",
-  "Chapter VII: Letters to the Horizon",
-  "Closing Colophon"
-];
+import { CHAPTERS, resolveChapterContent, toRoman } from '../lib/chapters';
 
 export default function Footer() {
-  const { currentSheetIndex, totalSheets, prevPage, nextPage } = useBookfolio();
+  const { currentSheetIndex, totalSheets, prevPage, nextPage, data } = useBookfolio();
+  const chapterLabels = [
+    "Cover at Rest",
+    ...CHAPTERS.map((chapter, idx) => `Chapter ${toRoman(idx + 1)}: ${resolveChapterContent(chapter, data.siteContent?.chapters).title}`),
+    "Closing Colophon",
+  ];
 
   return (
     <footer className="theme-header-footer w-full px-6 py-4 border-t backdrop-blur-md hidden lg:flex items-center justify-center z-30">
