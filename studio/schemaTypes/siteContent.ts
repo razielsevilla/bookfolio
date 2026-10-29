@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { richTextBlocks } from './lib/richText'
 
 // One field group per chapter: { title, leftSubtitle, rightSubtitle }.
 // `studioTitle` names the chapter for a non-technical editor; the book's
@@ -38,7 +39,7 @@ export default defineType({
         defineField({ name: 'frontName', title: 'Front Cover Name', type: 'string' }),
         defineField({ name: 'frontCue', title: 'Front Cover Cue', type: 'string', description: 'e.g. "CLICK TO UNVEIL →"' }),
         defineField({ name: 'backHeading', title: 'Back Cover Heading', type: 'string', description: 'e.g. "COLOPHON"' }),
-        defineField({ name: 'backDescription', title: 'Back Cover Description', type: 'text' }),
+        defineField({ name: 'backDescription', title: 'Back Cover Description', type: 'array', of: richTextBlocks }),
         defineField({ name: 'backCopyrightLine', title: 'Back Cover Copyright Line', type: 'string', description: 'Year + name only — "ALL RIGHTS RESERVED" is fixed below it.' }),
       ],
     }),
@@ -48,7 +49,13 @@ export default defineType({
       type: 'object',
       group: 'colophon',
       fields: [
-        defineField({ name: 'introParagraph', title: 'Intro Paragraph', type: 'text' }),
+        defineField({
+          name: 'introParagraph',
+          title: 'Intro Paragraph',
+          type: 'array',
+          of: richTextBlocks,
+          description: 'Select text and use the link icon to credit a person or link out.',
+        }),
         defineField({
           name: 'socials',
           title: 'Social Links',

@@ -1,6 +1,7 @@
 "use client";
 import { useBookfolio } from '../../../context/BookfolioContext';
 import type { ChapterPageProps } from '../../../lib/chapters';
+import { RichParagraphs } from '../../shared/ChunkedText';
 
 // Chapter I — Right Page: The Executive Summary
 export default function Chapter1ExecutiveSummary({ chapterTitle, subtitle }: ChapterPageProps) {
@@ -17,11 +18,11 @@ export default function Chapter1ExecutiveSummary({ chapterTitle, subtitle }: Cha
       </div>
 
       <div className="flex-1 overflow-y-auto page-scroll pr-2 space-y-4">
-        {author?.summaryNarrative && (
-          <p className="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90">
-            {author.summaryNarrative}
-          </p>
-        )}
+        <RichParagraphs
+          value={author?.summaryNarrative}
+          className="space-y-2"
+          paragraphClassName="text-sm leading-relaxed text-justify font-body text-[#1A2340]/90"
+        />
 
         {corePillars.length > 0 && (
           <div>

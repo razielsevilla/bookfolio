@@ -2,6 +2,11 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { usePageFlipAudio } from '../hooks/usePageFlipAudio';
 
+// Sanity Portable Text — an array of block objects. Used for every narrative
+// field (case studies, bios, colophon copy) so entries can bold/link text
+// (e.g. crediting a teammate with a link to their portfolio).
+export type RichText = any[];
+
 export interface Project {
   _id: string;
   title: string;
@@ -11,9 +16,9 @@ export interface Project {
   orderRank?: number;
   previewImage?: any;
   previewCaption?: string;
-  desc?: string;
-  caseStudyChallenge?: string;
-  caseStudyArchitecture?: string;
+  desc?: RichText;
+  caseStudyChallenge?: RichText;
+  caseStudyArchitecture?: RichText;
   tech?: string;
   repoUrl?: string;
   liveUrl?: string;
@@ -30,7 +35,6 @@ export interface Certificate {
   credentialId?: string;
   verifyUrl?: string;
   pdfUrl?: string;
-  highlights?: string[];
   image?: any;
   previewCaption?: string;
 }
@@ -65,8 +69,8 @@ export interface Author {
   photo?: any;
   affiliation?: string;
   availabilityStatus?: string;
-  manifesto?: string;
-  summaryNarrative?: string;
+  manifesto?: RichText;
+  summaryNarrative?: RichText;
   corePillars?: string[];
   // Résumé-only — not shown in any book chapter.
   educationHistory?: EducationEntry[];
@@ -84,12 +88,12 @@ export interface SiteContentCovers {
   frontName: string;
   frontCue: string;
   backHeading: string;
-  backDescription: string;
+  backDescription: RichText;
   backCopyrightLine: string;
 }
 
 export interface SiteContentColophon {
-  introParagraph: string;
+  introParagraph: RichText;
   socials: SocialLink[];
 }
 
@@ -147,9 +151,7 @@ export interface Award {
   hostOrganization?: string;
   dateAwarded?: string;
   location?: string;
-  impactScopeScale?: string;
-  impactDeliveredBuild?: string;
-  impactCoreCompetencies?: string;
+  significance?: RichText;
   image?: any;
   previewCaption?: string;
 }

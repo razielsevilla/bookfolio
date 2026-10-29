@@ -72,24 +72,6 @@ export default function Chapter5CredentialPlate({ chapterTitle, subtitle }: Chap
         </div>
 
         <CredentialPlate image={activeCert.image} caption={activeCert.previewCaption} />
-
-        {activeCert.highlights && activeCert.highlights.length > 0 && (
-          <div className="max-w-[90%] mx-auto">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="w-6 h-px bg-[var(--paper-primary)]/30" />
-              <span className="text-[10px] uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">Highlights</span>
-              <span className="w-6 h-px bg-[var(--paper-primary)]/30" />
-            </div>
-            <ul className="space-y-1">
-              {activeCert.highlights.map((highlight, idx) => (
-                <li key={idx} className="flex gap-2 text-xs text-[#1A2340]/85 font-body leading-relaxed">
-                  <span className="text-[var(--paper-primary)] shrink-0 mt-0.5 text-[9px]">&#9670;</span>
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     </div>
   );

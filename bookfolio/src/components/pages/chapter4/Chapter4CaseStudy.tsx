@@ -2,42 +2,7 @@
 import { useBookfolio } from '../../../context/BookfolioContext';
 import type { ChapterPageProps } from '../../../lib/chapters';
 import ProjectPreviewPlate from './ProjectPreviewPlate';
-
-// Case study fields are authored as a single flowing paragraph. Splitting on
-// sentence boundaries and long em-dash clauses turns that into scannable
-// bullet chunks without touching the stored text — a fragment is only kept
-// on its own when it's long enough to read as a standalone idea; short
-// fragments (usually a parenthetical aside between a pair of dashes) are
-// folded back into their neighbor instead of left dangling.
-function splitIntoChunks(text?: string | null): string[] {
-  if (!text) return [];
-  const chunks: string[] = [];
-  for (const raw of text.split(/(?<=[.!?])\s+(?=[A-Z])|\s+—\s+|—/)) {
-    const part = raw.trim();
-    if (!part) continue;
-    if (chunks.length && part.length < 45) {
-      chunks[chunks.length - 1] = `${chunks[chunks.length - 1]} — ${part}`;
-    } else {
-      chunks.push(`${part.charAt(0).toUpperCase()}${part.slice(1)}`);
-    }
-  }
-  return chunks;
-}
-
-function ChunkList({ text }: { text?: string | null }) {
-  const chunks = splitIntoChunks(text);
-  if (chunks.length === 0) return null;
-  return (
-    <ul className="mt-1.5 space-y-1.5">
-      {chunks.map((chunk, idx) => (
-        <li key={idx} className="flex gap-2 text-sm text-[#1A2340]/90 font-body leading-relaxed">
-          <span className="text-[var(--paper-primary)] shrink-0 mt-[7px] text-[7px]">&#9670;</span>
-          <span className="text-justify">{chunk}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
+import { RichBulletSection } from '../../shared/ChunkedText';
 
 function ChallengeIcon({ className }: { className?: string }) {
   return (
@@ -94,7 +59,7 @@ export default function Chapter4CaseStudy({ chapterTitle, subtitle }: ChapterPag
   ].filter((l): l is { label: string; url: string } => Boolean(l.url));
 
   const hasStructuredCaseStudy = Boolean(
-    activeProject.caseStudyChallenge || activeProject.caseStudyArchitecture
+    activeProject.caseStudyChallenge?.length || activeProject.caseStudyArchitecture?.length
   );
 
   return (
@@ -158,30 +123,12 @@ export default function Chapter4CaseStudy({ chapterTitle, subtitle }: ChapterPag
 
         {hasStructuredCaseStudy ? (
           <div className="space-y-4">
-            {CASE_STUDY_SECTIONS.map(({ field, label, Icon }) => {
-              const text = activeProject[field];
-              if (!text) return null;
-              return (
-                <div key={field} className="border-l-2 border-[var(--paper-primary)]/25 pl-3">
-                  <div className="flex items-center gap-1.5">
-                    <Icon className="w-3 h-3 text-[var(--paper-primary)] shrink-0" />
-                    <span className="text-[10px] uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{label}</span>
-                  </div>
-                  <ChunkList text={text} />
-                </div>
-              );
-            })}
+            {CASE_STUDY_SECTIONS.map(({ field, label, Icon }) => (
+              <RichBulletSection key={field} icon={Icon} label={label} value={activeProject[field]} />
+            ))}
           </div>
         ) : (
-          activeProject.desc && (
-            <div className="border-l-2 border-[var(--paper-primary)]/25 pl-3">
-              <div className="flex items-center gap-1.5">
-                <OverviewIcon className="w-3 h-3 text-[var(--paper-primary)] shrink-0" />
-                <span className="text-[10px] uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">Overview</span>
-              </div>
-              <ChunkList text={activeProject.desc} />
-            </div>
-          )
+          <RichBulletSection icon={OverviewIcon} label="Overview" value={activeProject.desc} />
         )}
       </div>
     </div>

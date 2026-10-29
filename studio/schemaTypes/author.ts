@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { richTextBlocks } from './lib/richText'
 
 export default defineType({
   name: 'author',
@@ -50,17 +51,17 @@ export default defineType({
     defineField({
       name: 'manifesto',
       title: 'Builder Manifesto',
-      type: 'text',
-      description: 'A short, highlighted blockquote framing your engineering philosophy.',
-      validation: (Rule) => Rule.max(300),
+      type: 'array',
+      of: richTextBlocks,
+      description: 'A short, highlighted blockquote framing your engineering philosophy. Select text and use the link icon to credit a person or project.',
       group: 'identity',
     }),
     defineField({
       name: 'summaryNarrative',
       title: 'Executive Summary',
-      type: 'text',
-      description: 'A fluid 2-3 sentence executive paragraph — keyword-rich (ATS-ready) but read as prose, not a bullet breakdown.',
-      validation: (Rule) => Rule.max(600),
+      type: 'array',
+      of: richTextBlocks,
+      description: 'A fluid 2-3 sentence executive paragraph — keyword-rich (ATS-ready) but read as prose, not a bullet breakdown. Select text and use the link icon to credit a person or project.',
       group: 'summary',
     }),
     defineField({

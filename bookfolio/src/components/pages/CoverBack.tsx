@@ -1,6 +1,7 @@
 "use client";
 import { useBookfolio } from '../../context/BookfolioContext';
 import { DEFAULT_SITE_CONTENT } from '../../lib/defaultSiteContent';
+import { RichParagraphs } from '../shared/ChunkedText';
 
 export default function CoverBack() {
   const { data } = useBookfolio();
@@ -32,9 +33,12 @@ export default function CoverBack() {
         
         <h3 className="text-xl font-bold font-headline text-[#E8C77A] tracking-[0.15em]">{covers.backHeading}</h3>
         <div className="w-8 h-[1px] bg-[#D4A574]/30 mx-auto mt-3 mb-5"></div>
-        <p className="text-[11px] text-[#F4EAD5]/70 max-w-[220px] mx-auto font-body leading-relaxed uppercase tracking-wider">
-          {covers.backDescription}
-        </p>
+        <RichParagraphs
+          value={covers.backDescription}
+          className="max-w-[220px] mx-auto"
+          paragraphClassName="text-[11px] text-[#F4EAD5]/70 font-body leading-relaxed uppercase tracking-wider"
+          linkClassName="underline decoration-[#D4A574]/50 underline-offset-2 hover:text-[#E8C77A] transition-colors"
+        />
       </div>
 
       <div className="text-[9px] tracking-[0.2em] text-[#D4A574]/80 font-mono z-10 relative mb-2 text-center">

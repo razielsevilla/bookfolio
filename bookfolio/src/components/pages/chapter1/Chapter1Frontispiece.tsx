@@ -2,6 +2,7 @@
 import { useBookfolio } from '../../../context/BookfolioContext';
 import { urlFor } from '../../../sanity/imageUrl';
 import type { ChapterPageProps } from '../../../lib/chapters';
+import { RichParagraphs } from '../../shared/ChunkedText';
 
 // Strips the scheme/mailto/www/trailing-slash so a URL reads as a clean handle,
 // e.g. "https://github.com/razielsevilla" -> "github.com/razielsevilla".
@@ -89,12 +90,14 @@ export default function Chapter1Frontispiece({ chapterTitle, subtitle }: Chapter
           </div>
         )}
 
-        {author?.manifesto && (
+        {(author?.manifesto?.length ?? 0) > 0 && (
           <>
             <div className="w-full h-px bg-[#D4A574]/25 mb-4"></div>
-            <p className="text-center italic text-[#1A2340]/70 font-body text-xs leading-relaxed px-3">
-              &ldquo;{author.manifesto}&rdquo;
-            </p>
+            <div className="text-center italic text-[#1A2340]/70 font-body text-xs leading-relaxed px-3">
+              <span aria-hidden="true">&ldquo;</span>
+              <RichParagraphs value={author?.manifesto} className="inline" paragraphClassName="inline" />
+              <span aria-hidden="true">&rdquo;</span>
+            </div>
           </>
         )}
       </div>

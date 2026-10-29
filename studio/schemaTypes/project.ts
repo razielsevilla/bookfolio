@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { richTextBlocks } from './lib/richText'
 
 export default defineType({
   name: 'project',
@@ -67,23 +68,25 @@ export default defineType({
     defineField({
       name: 'desc',
       title: 'Description (fallback overview)',
-      type: 'text',
-      description: 'Shown as a general overview on Chapter IV when the structured case-study sections below are empty.',
-      validation: Rule => Rule.max(450).error('Description must be 450 characters or less to fit on one page without scrolling.'),
+      type: 'array',
+      of: richTextBlocks,
+      description: 'Shown as a general overview on Chapter IV when the structured case-study sections below are empty. Select text and use the link icon to credit a teammate or collaborator.',
       group: 'exhibit',
     }),
     defineField({
       name: 'caseStudyChallenge',
       title: 'Case Study — The Challenge / Premise',
-      type: 'text',
-      description: 'The concrete real-world problem being addressed.',
+      type: 'array',
+      of: richTextBlocks,
+      description: 'The concrete real-world problem being addressed. Select text and use the link icon to credit a teammate or collaborator.',
       group: 'exhibit',
     }),
     defineField({
       name: 'caseStudyArchitecture',
       title: 'Case Study — Architectural Blueprint',
-      type: 'text',
-      description: 'The technical stack, data pipelines, algorithms, and design choices.',
+      type: 'array',
+      of: richTextBlocks,
+      description: 'The technical stack, data pipelines, algorithms, and design choices. Select text and use the link icon to credit a teammate or collaborator.',
       group: 'exhibit',
     }),
     // --- Tech & Links: badge pills and outbound links shown alongside the case study ---

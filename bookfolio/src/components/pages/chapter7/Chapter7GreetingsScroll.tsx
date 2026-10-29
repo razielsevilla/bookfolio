@@ -28,14 +28,14 @@ export default function Chapter7GreetingsScroll({ chapterTitle, subtitle }: Chap
       <div className="flex-1 flex flex-col overflow-y-auto page-scroll pr-1 pb-2">
         <div className="p-3 bg-[var(--paper-primary)]/10 rounded-xl border border-[var(--paper-primary)]/30 mb-4 text-xs leading-relaxed text-[#1A2340]/90 font-body relative overflow-hidden shrink-0">
           <div className="absolute top-0 left-0 w-1 h-full bg-[var(--paper-primary)]/50"></div>
-          <strong>Leave Your Mark:</strong> The Codex is open to fellow travelers. Select an emblem, share your name, and inscribe a brief greeting on the facing page to be recorded here in the ledger.
+          <strong>Leave a message:</strong> Fill out the form on the left with your name and a short message or testimonial — it&apos;ll show up here right away.
         </div>
 
         {(!data.guestbook || data.guestbook.length === 0) ? (
           <div className="flex-1 flex flex-col items-center justify-center opacity-50 text-center font-body text-xs px-4 pb-10">
             <svg className="w-10 h-10 mb-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-            <p>The scroll is currently blank.</p>
-            <p className="mt-1">Be the first to inscribe a tale on the facing page.</p>
+            <p>No messages yet.</p>
+            <p className="mt-1">Be the first to leave one — just fill out the form on the left.</p>
           </div>
         ) : (
           <div className="space-y-2">

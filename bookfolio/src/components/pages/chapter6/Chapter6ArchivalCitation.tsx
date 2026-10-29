@@ -2,6 +2,15 @@
 import { useBookfolio } from '../../../context/BookfolioContext';
 import type { ChapterPageProps } from '../../../lib/chapters';
 import CredentialPlate from '../chapter5/CredentialPlate';
+import { RichBulletSection } from '../../shared/ChunkedText';
+
+function SignificanceIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+    </svg>
+  );
+}
 
 // Chapter VI — Right Page: Archival Citation (Dynamic Detail & Preview)
 export default function Chapter6ArchivalCitation({ chapterTitle, subtitle }: ChapterPageProps) {
@@ -21,12 +30,6 @@ export default function Chapter6ArchivalCitation({ chapterTitle, subtitle }: Cha
       </div>
     );
   }
-
-  const significancePoints = [
-    { label: 'Scope & Scale', text: activeAward.impactScopeScale },
-    { label: 'Delivered Build', text: activeAward.impactDeliveredBuild },
-    { label: 'Core Competencies Proven', text: activeAward.impactCoreCompetencies },
-  ].filter((p): p is { label: string; text: string } => Boolean(p.text));
 
   return (
     <div className="flex flex-col h-full">
@@ -61,16 +64,7 @@ export default function Chapter6ArchivalCitation({ chapterTitle, subtitle }: Cha
 
         <CredentialPlate image={activeAward.image} caption={activeAward.previewCaption} />
 
-        {significancePoints.length > 0 && (
-          <div className="space-y-3">
-            {significancePoints.map(point => (
-              <div key={point.label}>
-                <span className="text-[10px] uppercase tracking-widest text-[var(--paper-primary)] font-bold font-body">{point.label}</span>
-                <p className="text-sm leading-relaxed font-body text-[#1A2340]/90 mt-1">{point.text}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        <RichBulletSection icon={SignificanceIcon} label="Significance" value={activeAward.significance} />
       </div>
     </div>
   );

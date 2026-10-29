@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { richTextBlocks } from './lib/richText'
 
 export default defineType({
   name: 'award',
@@ -64,24 +65,11 @@ export default defineType({
       group: 'citation',
     }),
     defineField({
-      name: 'impactScopeScale',
-      title: 'Significance — Scope & Scale',
-      type: 'text',
-      description: 'Number of participating teams, regional/national coverage.',
-      group: 'citation',
-    }),
-    defineField({
-      name: 'impactDeliveredBuild',
-      title: 'Significance — Delivered Build',
-      type: 'text',
-      description: 'The exact product/solution defended in front of judges.',
-      group: 'citation',
-    }),
-    defineField({
-      name: 'impactCoreCompetencies',
-      title: 'Significance — Core Competencies Proven',
-      type: 'text',
-      description: 'e.g. fast MVP execution, live pitch defence, architectural resilience under pressure.',
+      name: 'significance',
+      title: 'Significance',
+      type: 'array',
+      of: richTextBlocks,
+      description: 'Why this distinction matters — scope, what was built, and the skills it proved. Select text and use the link icon to credit a teammate with a link to their portfolio.',
       group: 'citation',
     }),
     defineField({

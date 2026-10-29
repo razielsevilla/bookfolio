@@ -95,7 +95,7 @@ export default function Chapter7Inscribe({ chapterTitle, subtitle }: ChapterPage
 
         {success && (
           <div className="p-2 mb-3 bg-green-500/10 border border-green-500/30 rounded-lg text-xs text-green-700 font-body font-bold text-center">
-            Inscribed successfully!
+            Message sent — thank you!
           </div>
         )}
 
@@ -114,7 +114,7 @@ export default function Chapter7Inscribe({ chapterTitle, subtitle }: ChapterPage
           </div>
 
           <div>
-            <label className="text-[9px] uppercase tracking-widest text-[var(--paper-primary)] font-bold block mb-1">Select Emblem</label>
+            <label className="text-[9px] uppercase tracking-widest text-[var(--paper-primary)] font-bold block mb-1">Choose an Icon</label>
             <div className="flex items-center space-x-2 bg-black/5 border border-[#4E4B46]/20 rounded-lg p-1.5">
               {Object.keys(EMBLEMS).map(emoji => (
                 <button
@@ -131,19 +131,19 @@ export default function Chapter7Inscribe({ chapterTitle, subtitle }: ChapterPage
 
           <div className="flex-1 flex flex-col">
             <label className="text-[9px] uppercase tracking-widest text-[var(--paper-primary)] font-bold block mb-1">Your Message</label>
-            <textarea required name="message" placeholder="Write a short greeting..." className="w-full flex-1 bg-black/5 border border-[#4E4B46]/20 rounded-lg p-2.5 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] placeholder-[#1A2340]/40 resize-none min-h-[80px]"></textarea>
+            <textarea required name="message" placeholder="Write a short message or testimonial..." className="w-full flex-1 bg-black/5 border border-[#4E4B46]/20 rounded-lg p-2.5 text-xs text-[#1A2340] focus:outline-none focus:border-[var(--paper-primary)] placeholder-[#1A2340]/40 resize-none min-h-[80px]"></textarea>
           </div>
 
           <div className="pt-1 shrink-0">
             <button disabled={isSubmitting} type="submit" className="w-full bg-[#1A2340] text-[#F4EAD5] font-bold text-xs py-3 rounded-lg hover:bg-[#243054] transition-all flex items-center justify-center gap-2 shadow-md disabled:opacity-70 disabled:cursor-not-allowed">
               {isSubmitting ? (
-                <span className="animate-pulse">Inscribing...</span>
+                <span className="animate-pulse">Sending...</span>
               ) : (
                 <>
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
-                  Publish to Codex
+                  Send Message
                 </>
               )}
             </button>
